@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 서비스 비교 탐색기 🤖 | 청암대학교 간호학과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#f0f4f8;--surface:#ffffff;--surface2:#f8fafc;--border:#e2e8f0;
+  --text:#0f172a;--text2:#475569;--text3:#94a3b8;
+  --accent:#0f4c81;--accent2:#1e7fcb;
+  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --radius:16px;--transition:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"]{
+  --bg:#0a0f1e;--surface:#141929;--surface2:#1a2035;--border:#2a3448;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#475569;
+  --accent:#3b82f6;--accent2:#60a5fa;
+  --shadow:0 2px 8px rgba(0,0,0,.4);--shadow-lg:0 8px 32px rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--transition),color var(--transition)}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.header-inner{max-width:1320px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px;gap:10px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#0f4c81,#1e7fcb);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.logo-text{font-weight:700;font-size:15px;color:var(--text);line-height:1.2}
+.logo-sub{font-size:11px;color:var(--text3);font-weight:400}
+.header-actions{display:flex;align-items:center;gap:8px}
+.btn-icon{width:38px;height:38px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:17px;transition:all var(--transition);position:relative}
+.btn-icon:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.2)}
+.badge-dot{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;background:#ef4444;color:#fff;border-radius:8px;font-size:9px;display:none;align-items:center;justify-content:center;font-weight:700;padding:0 3px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f4c81 0%,#1e7fcb 45%,#0891b2 100%);color:#fff;padding:36px 20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:320px;height:320px;background:rgba(255,255,255,.05);border-radius:50%;pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-80px;left:15%;width:240px;height:240px;background:rgba(255,255,255,.04);border-radius:50%;pointer-events:none}
+.hero-inner{max-width:1320px;margin:0 auto;position:relative;z-index:1}
+.hero h1{font-size:clamp(20px,4vw,34px);font-weight:900;letter-spacing:-.5px;margin-bottom:8px}
+.hero p{font-size:13px;opacity:.85;max-width:640px;line-height:1.7;margin-bottom:18px}
+.hero-stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat-chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(8px)}
+
+/* TOOLBAR */
+.toolbar{max-width:1320px;margin:20px auto 0;padding:0 20px}
+.toolbar-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.search-box{flex:1;min-width:180px;position:relative}
+.search-box i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px;pointer-events:none}
+.search-box input{width:100%;padding:9px 11px 9px 32px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;transition:all var(--transition);outline:none}
+.search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,76,129,.12)}
+.btn-group{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)}
+.btn-group button{padding:8px 13px;background:transparent;border:none;cursor:pointer;font-size:12px;font-family:inherit;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:4px;transition:all var(--transition);white-space:nowrap}
+.btn-group button.active{background:var(--accent);color:#fff}
+.btn-group button:hover:not(.active){background:var(--surface2)}
+.action-btn{padding:8px 14px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;transition:all var(--transition);white-space:nowrap}
+.btn-quiz{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff}
+.btn-quiz:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,58,237,.4)}
+.btn-compare{background:linear-gradient(135deg,#059669,#10b981);color:#fff}
+.btn-compare:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 14px rgba(5,150,105,.4)}
+.btn-compare:disabled{opacity:.5;cursor:not-allowed}
+.btn-rating-view{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff}
+.btn-rating-view:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(217,119,6,.4)}
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.filter-chip{padding:5px 11px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);background:var(--surface);transition:all var(--transition);white-space:nowrap}
+.filter-chip.active{border-color:var(--accent);background:var(--accent);color:#fff}
+.filter-chip:hover:not(.active){border-color:var(--accent2);color:var(--accent2)}
+
+/* MAIN */
+.main{max-width:1320px;margin:18px auto 40px;padding:0 20px}
+
+/* PANEL BASE */
+.panel{border-radius:var(--radius);padding:22px;margin-bottom:18px;display:none}
+.panel.open{display:block}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.panel-header h2{font-size:16px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px}
+.panel-close{padding:6px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.panel-close:hover{background:var(--surface2)}
+
+/* FAV PANEL */
+.fav-panel{background:var(--surface);border:2px solid #f59e0b}
+.fav-list{display:flex;gap:8px;flex-wrap:wrap}
+.fav-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;color:var(--text)}
+.fav-remove{cursor:pointer;color:var(--text3);font-size:10px;margin-left:3px}
+.fav-remove:hover{color:#ef4444}
+
+/* COMPARE PANEL */
+.compare-panel{background:var(--surface);border:2px solid var(--accent)}
+.compare-wrap{overflow-x:auto}
+.compare-table{width:100%;border-collapse:collapse}
+.compare-table th,.compare-table td{padding:9px 13px;border:1px solid var(--border);font-size:12px;vertical-align:top;min-width:150px}
+.compare-table th{background:var(--surface2);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)}
+.compare-table .row-label{font-weight:700;color:var(--text);background:var(--surface2);white-space:nowrap;font-size:11px;width:110px}
+.svc-header{text-align:center}
+.svc-header .emoji{font-size:26px;display:block;margin-bottom:3px}
+.svc-header .name{font-weight:800;font-size:13px;color:var(--text)}
+.svc-header .company{font-size:10px;color:var(--text3)}
+.c-ok{color:#16a34a;font-weight:700}
+.c-no{color:#dc2626;font-weight:700}
+
+/* RATINGS PANEL */
+.ratings-panel{background:var(--surface);border:2px solid #d97706}
+.ratings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.ratings-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px}
+.rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rc-name{font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;color:var(--text)}
+.rc-avg{font-size:12px;color:var(--text3)}
+.rc-stars-display{color:#f59e0b;font-size:13px;letter-spacing:1px}
+.rc-comments{max-height:120px;overflow-y:auto}
+.rc-comment{background:var(--surface);border-radius:8px;padding:7px 9px;margin-bottom:6px;font-size:11px;color:var(--text2);line-height:1.5;border:1px solid var(--border)}
+.rc-comment .rc-c-stars{color:#f59e0b;font-size:10px;margin-bottom:2px}
+.rc-comment .rc-c-time{font-size:9px;color:var(--text3);float:right;font-family:'Space Mono',monospace}
+.rc-empty{font-size:11px;color:var(--text3);font-style:italic}
+
+/* QUIZ PANEL */
+.quiz-panel{background:var(--surface);border:1px solid var(--border)}
+.quiz-diff-selector{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.diff-btn{padding:7px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;background:var(--surface2);color:var(--text2);font-family:inherit;transition:all var(--transition)}
+.diff-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.diff-btn.active-beginner{background:#dcfce7;border-color:#16a34a;color:#15803d}
+.diff-btn.active-intermediate{background:#fef3c7;border-color:#d97706;color:#92400e}
+.diff-btn.active-all{background:linear-gradient(135deg,#7c3aed,#a855f7);border-color:#7c3aed;color:#fff}
+[data-theme="dark"] .diff-btn.active-beginner{background:#14532d;border-color:#16a34a;color:#86efac}
+[data-theme="dark"] .diff-btn.active-intermediate{background:#451a03;border-color:#d97706;color:#fcd34d}
+.quiz-progress-bar{height:5px;background:var(--border);border-radius:3px;margin-bottom:22px;overflow:hidden}
+.quiz-progress-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.fill-beginner{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.fill-intermediate{background:linear-gradient(90deg,#d97706,#f59e0b)}
+.fill-all{background:linear-gradient(90deg,#7c3aed,#a855f7)}
+.quiz-difficulty-badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+.qdb-beginner{background:#dcfce7;color:#15803d}
+.qdb-intermediate{background:#fef3c7;color:#92400e}
+[data-theme="dark"] .qdb-beginner{background:#14532d;color:#86efac}
+[data-theme="dark"] .qdb-intermediate{background:#451a03;color:#fcd34d}
+.quiz-q{font-size:15px;font-weight:700;color:var(--text);line-height:1.65;margin-bottom:6px}
+.quiz-hint{font-size:12px;color:var(--text3);margin-bottom:18px}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.quiz-opt{padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);transition:all var(--transition);display:flex;align-items:center;gap:8px;text-align:left;font-family:inherit}
+.quiz-opt:hover:not([disabled]){border-color:var(--accent);color:var(--accent);background:rgba(15,76,129,.05)}
+.quiz-opt.correct{border-color:#16a34a!important;background:#dcfce7!important;color:#15803d!important}
+.quiz-opt.wrong{border-color:#dc2626!important;background:#fef2f2!important;color:#b91c1c!important}
+[data-theme="dark"] .quiz-opt.correct{background:#14532d!important;color:#86efac!important}
+[data-theme="dark"] .quiz-opt.wrong{background:#450a0a!important;color:#fca5a5!important}
+.quiz-opt[disabled]{cursor:not-allowed}
+.quiz-feedback{padding:11px 14px;border-radius:10px;font-size:12px;font-weight:600;margin-bottom:14px;display:none;line-height:1.6}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.quiz-feedback.fail{background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5}
+[data-theme="dark"] .quiz-feedback.ok{background:#14532d;color:#86efac;border-color:#166534}
+[data-theme="dark"] .quiz-feedback.fail{background:#450a0a;color:#fca5a5;border-color:#991b1b}
+.quiz-nav{display:flex;gap:8px;flex-wrap:wrap}
+.btn-next{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.btn-next:hover:not(:disabled){background:var(--accent2);transform:translateY(-1px)}
+.btn-next:disabled{opacity:.4;cursor:not-allowed}
+.btn-quit-q{padding:9px 14px;border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.btn-quit-q:hover{background:var(--surface2)}
+.quiz-result{text-align:center;padding:16px 0}
+.result-emoji{font-size:52px;margin-bottom:8px}
+.result-score{font-size:38px;font-weight:900;margin-bottom:4px}
+.result-label{font-size:13px;color:var(--text3);margin-bottom:6px}
+.result-comment{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px}
+.result-breakdown{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.rbd{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--text2)}
+.btn-retry{padding:11px 26px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.btn-retry:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(124,58,237,.4)}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.service-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all var(--transition);position:relative}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--card-color);transition:height var(--transition)}
+.service-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--card-color)}
+.service-card.selected{border-color:var(--card-color);box-shadow:0 0 0 2px var(--card-color),var(--shadow)}
+.card-top{padding:18px 18px 0}
+.card-header-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.card-logo{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.card-actions{display:flex;gap:5px}
+.card-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all var(--transition);color:var(--text3)}
+.card-btn.fav-active{background:#fef2f2;border-color:#fca5a5;color:#ef4444}
+.card-btn.sel-active{border-color:var(--card-color);color:#fff}
+.card-name{font-size:16px;font-weight:800;color:var(--text);margin-bottom:1px}
+.card-meta{font-size:11px;color:var(--text3);font-family:'Space Mono',monospace}
+.card-badges{display:flex;gap:4px;flex-wrap:wrap;margin:8px 0 10px}
+.badge{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.2px}
+.b-free{background:#dcfce7;color:#166534}
+.b-paid{background:#fef3c7;color:#92400e}
+.b-freemium{background:#e0f2fe;color:#075985}
+.b-kr{background:#ede9fe;color:#5b21b6}
+.b-file{background:#fce7f3;color:#9d174d}
+.b-web{background:#e0fdf4;color:#065f46}
+[data-theme="dark"] .b-free{background:#14532d;color:#86efac}
+[data-theme="dark"] .b-paid{background:#451a03;color:#fcd34d}
+[data-theme="dark"] .b-freemium{background:#0c4a6e;color:#7dd3fc}
+[data-theme="dark"] .b-kr{background:#2e1065;color:#c4b5fd}
+[data-theme="dark"] .b-file{background:#500724;color:#fbcfe8}
+[data-theme="dark"] .b-web{background:#022c22;color:#6ee7b7}
+
+/* CARD TABS */
+.card-tabs{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:10px}
+.c-tab{flex:1;padding:8px 4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--text3);background:transparent;border:none;font-family:inherit;transition:all var(--transition);text-align:center;white-space:nowrap}
+.c-tab:hover{color:var(--text2);background:var(--surface2)}
+.c-tab.active{color:var(--card-color);border-bottom:2px solid var(--card-color);background:var(--surface)}
+.c-tab-content{display:none;padding:14px 18px}
+.c-tab-content.active{display:block}
+
+/* TAB: 특징 */
+.card-features li{font-size:12px;color:var(--text2);line-height:1.85;list-style:none;padding-left:13px;position:relative}
+.card-features li::before{content:'▸';position:absolute;left:0;color:var(--card-color);font-size:10px;top:1px}
+.card-scenario{background:var(--surface2);border-left:3px solid var(--card-color);border-radius:0 8px 8px 0;padding:8px 10px;margin:8px 0}
+.scenario-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+.scenario-text{font-size:11px;color:var(--text2);line-height:1.55}
+.strength-box{background:linear-gradient(135deg,rgba(15,76,129,.05),rgba(30,127,203,.05));border:1px solid rgba(15,76,129,.12);border-radius:10px;padding:10px 12px;margin-top:10px}
+[data-theme="dark"] .strength-box{background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(96,165,250,.07));border-color:rgba(59,130,246,.18)}
+.strength-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:var(--accent2);margin-bottom:4px}
+.strength-text{font-size:11px;color:var(--text2);line-height:1.6}
+
+/* TAB: 프롬프트 */
+.prompt-list{display:flex;flex-direction:column;gap:8px}
+.prompt-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;position:relative;cursor:pointer;transition:all var(--transition)}
+.prompt-item:hover{border-color:var(--card-color);transform:translateX(2px)}
+.prompt-num{position:absolute;top:8px;right:10px;width:18px;height:18px;background:var(--card-color);color:#fff;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.prompt-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.prompt-text{font-size:11px;color:var(--text2);line-height:1.6;padding-right:22px;font-family:'Space Mono',monospace;background:transparent;border:none;width:100%;resize:none;cursor:pointer;outline:none}
+.prompt-copy{display:block;text-align:right;font-size:10px;color:var(--accent2);margin-top:4px;font-weight:600;cursor:pointer}
+.prompt-copy:hover{text-decoration:underline}
+.prompt-tip{font-size:11px;color:var(--text3);margin-top:10px;padding:8px 10px;background:var(--surface2);border-radius:8px;border:1px dashed var(--border);line-height:1.5}
+
+/* TAB: 나만의 프롬프트 */
+.myprompt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.myprompt-header h4{font-size:12px;font-weight:800;color:var(--text)}
+.myprompt-count{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace}
+.myprompt-form{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.myprompt-label-input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:11px;font-family:inherit;outline:none;margin-bottom:6px;transition:border-color var(--transition)}
+.myprompt-label-input:focus{border-color:var(--card-color)}
+.myprompt-textarea{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:11px;font-family:'Space Mono',monospace;line-height:1.6;resize:vertical;min-height:72px;outline:none;transition:border-color var(--transition)}
+.myprompt-textarea:focus{border-color:var(--card-color)}
+.myprompt-form-footer{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+.btn-myprompt-save{padding:6px 14px;border:none;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--transition);color:#fff}
+.btn-myprompt-save:hover{opacity:.85;transform:translateY(-1px)}
+.btn-myprompt-cancel{padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:11px;background:var(--surface);color:var(--text2);cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.btn-myprompt-cancel:hover{background:var(--surface2)}
+.myprompt-list{display:flex;flex-direction:column;gap:7px}
+.myprompt-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;position:relative;border-left:3px solid var(--card-color)}
+.myprompt-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.myprompt-item-label{font-size:10px;font-weight:700;color:var(--card-color);text-transform:uppercase;letter-spacing:.3px}
+.myprompt-item-actions{display:flex;gap:4px}
+.btn-mp-action{padding:2px 7px;border:1px solid var(--border);border-radius:5px;font-size:10px;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit;transition:all var(--transition)}
+.btn-mp-action:hover{background:var(--surface2)}
+.btn-mp-del:hover{background:#fef2f2;border-color:#fca5a5;color:#dc2626}
+.myprompt-item-text{font-size:11px;color:var(--text2);line-height:1.6;font-family:'Space Mono',monospace;white-space:pre-wrap;word-break:break-all}
+.myprompt-empty{text-align:center;padding:20px 10px;color:var(--text3);font-size:12px}
+.myprompt-add-btn{width:100%;padding:8px;border:1.5px dashed var(--border);border-radius:9px;background:transparent;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all var(--transition);margin-bottom:8px}
+.myprompt-add-btn:hover{border-color:var(--card-color);color:var(--card-color);background:var(--surface2)}
+
+/* TAB: 가격 */
+.price-section{margin-bottom:10px}
+.price-tier{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:8px;position:relative;overflow:hidden}
+.price-tier::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--tier-color)}
+.price-tier-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:4px}
+.price-tier-name{font-size:12px;font-weight:800;color:var(--text)}
+.price-amount{font-size:13px;font-weight:900;color:var(--tier-color);font-family:'Space Mono',monospace}
+.price-krw{font-size:10px;color:var(--text3);font-family:'Space Mono',monospace}
+.price-features li{font-size:11px;color:var(--text2);line-height:1.8;list-style:none;padding-left:13px;position:relative}
+.price-features li::before{content:'·';position:absolute;left:3px;color:var(--text3)}
+.price-note{font-size:10px;color:var(--text3);margin-top:8px;padding:6px 9px;background:var(--surface2);border-radius:7px;border:1px dashed var(--border);line-height:1.5}
+
+/* TAB: 학생평가 */
+.rating-area{text-align:center;margin-bottom:14px}
+.rating-label{font-size:11px;color:var(--text3);margin-bottom:8px}
+.star-input{display:flex;justify-content:center;gap:4px;margin-bottom:10px}
+.star-btn{font-size:24px;cursor:pointer;transition:transform var(--transition);filter:grayscale(1);opacity:.5;background:none;border:none;padding:0}
+.star-btn.active{filter:grayscale(0);opacity:1}
+.star-btn:hover{transform:scale(1.2)}
+.rating-memo{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:12px;font-family:inherit;resize:none;outline:none;transition:border-color var(--transition);margin-bottom:8px}
+.rating-memo:focus{border-color:var(--card-color)}
+.btn-submit-rating{width:100%;padding:9px;background:var(--card-color);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.btn-submit-rating:hover{opacity:.88;transform:translateY(-1px)}
+.rating-divider{height:1px;background:var(--border);margin:12px 0}
+.rating-summary{text-align:center}
+.rs-avg{font-size:22px;font-weight:900;color:var(--text);margin-bottom:2px}
+.rs-stars{color:#f59e0b;font-size:14px;letter-spacing:2px;margin-bottom:2px}
+.rs-count{font-size:11px;color:var(--text3);margin-bottom:10px}
+.rs-comments{max-height:110px;overflow-y:auto}
+.rs-comment{background:var(--surface2);border-radius:8px;padding:7px 9px;margin-bottom:5px;font-size:11px;color:var(--text2);line-height:1.5;border:1px solid var(--border);text-align:left}
+.rs-c-stars{color:#f59e0b;font-size:10px}
+.rs-success{background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;text-align:center;margin-top:6px;display:none}
+[data-theme="dark"] .rs-success{background:#14532d;color:#86efac}
+
+/* CARD FOOTER */
+.card-footer{padding:10px 18px 14px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+.card-url{font-size:11px;color:var(--accent2);text-decoration:none;font-family:'Space Mono',monospace;display:flex;align-items:center;gap:3px}
+.card-url:hover{text-decoration:underline}
+
+/* TABLE VIEW */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th{background:var(--surface2);padding:10px 13px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
+td{padding:11px 13px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.td-name{font-weight:700;color:var(--text);font-size:13px;white-space:nowrap}
+.td-link{color:var(--accent2);text-decoration:none;font-family:'Space Mono',monospace;font-size:11px}
+.td-link:hover{text-decoration:underline}
+.td-price{font-family:'Space Mono',monospace;font-size:11px;white-space:nowrap}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--text3)}
+.empty i{font-size:36px;margin-bottom:10px;display:block;opacity:.35}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:18px;text-align:center}
+footer p{font-size:11px;color:var(--text3);line-height:1.9}
+footer strong{color:var(--text2)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f172a;color:#fff;padding:10px 20px;border-radius:12px;font-size:12px;font-weight:600;z-index:9999;transition:transform .3s ease;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+[data-theme="dark"] .toast{background:#f1f5f9;color:#0f172a}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.service-card{animation:fadeUp .3s ease both}
+.service-card:nth-child(1){animation-delay:.04s}
+.service-card:nth-child(2){animation-delay:.08s}
+.service-card:nth-child(3){animation-delay:.12s}
+.service-card:nth-child(4){animation-delay:.16s}
+.service-card:nth-child(5){animation-delay:.20s}
+.service-card:nth-child(6){animation-delay:.24s}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .toolbar-row{flex-direction:column;align-items:stretch}
+  .btn-group{justify-content:center}
+  .card-grid{grid-template-columns:1fr}
+  .quiz-options{grid-template-columns:1fr}
+  .ratings-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .logo-sub{display:none}
+  .c-tab{font-size:10px;padding:7px 3px}
+  .action-btn span{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">🤖</div>
+      <div>
+        <div class="logo-text">AI 서비스 비교 탐색기 🤖</div>
+        <div class="logo-sub">청암대학교 간호학과 · 디지털리터러시와 AI활용</div>
+      </div>
+    </a>
+    <div class="header-actions">
+      <button class="btn-icon" id="btnFavToggle" title="즐겨찾기">
+        ⭐
+        <span class="badge-dot" id="favBadge"></span>
+      </button>
+      <button class="btn-icon" id="btnRatingsGlobal" title="전체 평가 현황">
+        📊
+        <span class="badge-dot" id="ratingBadge"></span>
+      </button>
+      <button class="btn-icon" id="btnDark" title="다크모드">
+        🌙
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <h1>AI 서비스 비교 탐색기 🤖</h1>
+    <p>ChatGPT · Gemini · Claude · Perplexity · NotebookLM · AI Studio — 간호학과 학생을 위한 AI 도구 종합 가이드. 프롬프트 예시·가격 비교·학생 평가·퀴즈까지!</p>
+    <div class="hero-stats">
+      <div class="stat-chip">🛠 9개 서비스</div>
+      <div class="stat-chip">💬 프롬프트 예시 27개</div>
+      <div class="stat-chip">💰 가격 정보 포함</div>
+      <div class="stat-chip">🧠 퀴즈 13문항</div>
+      <div class="stat-chip">⭐ 학생 평가</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-row">
+    <div class="search-box">
+      🔍
+      <input type="text" id="searchInput" placeholder="서비스명·키워드·가격 검색…" autocomplete="off">
+    </div>
+    <div class="btn-group">
+      <button class="active" id="btnCard" onclick="setView('card')">⊞ 카드</button>
+      <button id="btnTable" onclick="setView('table')">📋 테이블</button>
+    </div>
+    <button class="action-btn btn-quiz" onclick="openQuizSelector()">❓ <span>퀴즈</span></button>
+    <button class="action-btn btn-compare" id="btnCompare" onclick="showCompare()" disabled>
+      ⚖️ <span>비교</span> <span id="selCount" style="font-size:10px;opacity:.8">(0)</span>
+    </button>
+    <button class="action-btn btn-rating-view" onclick="toggleRatingsPanel()">⭐ <span>평가현황</span></button>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">🔽필터</span>
+    <div class="filter-chip" data-filter="free" onclick="toggleFilter(this)">✅ 무료</div>
+    <div class="filter-chip" data-filter="korean" onclick="toggleFilter(this)">🇰🇷 한국어</div>
+    <div class="filter-chip" data-filter="file" onclick="toggleFilter(this)">📎 파일업로드</div>
+    <div class="filter-chip" data-filter="websearch" onclick="toggleFilter(this)">🌐 웹검색</div>
+    <div class="filter-chip" data-filter="fav" onclick="toggleFilter(this)">⭐ 즐겨찾기</div>
+    <div class="filter-chip" data-filter="rated" onclick="toggleFilter(this)">💬 평가완료</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- FAV PANEL -->
+  <div class="panel fav-panel" id="favPanel">
+    <div class="panel-header">
+      <h2>⭐ 즐겨찾기 <span style="font-size:11px;font-weight:500;color:var(--text3)">(브라우저 누적 저장)</span></h2>
+      <button class="panel-close" onclick="toggleFavPanel()">✕ 닫기</button>
+    </div>
+    <div class="fav-list" id="favList"></div>
+  </div>
+
+  <!-- RATINGS OVERVIEW PANEL -->
+  <div class="panel ratings-panel" id="ratingsPanel">
+    <div class="panel-header">
+      <h2>📊 학생 평가 현황 <span style="font-size:11px;font-weight:500;color:var(--text3)">(브라우저 누적 저장)</span></h2>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="panel-close" style="color:#dc2626;border-color:#fca5a5" onclick="clearAllRatings()">🗑️ 전체 초기화</button>
+        <button class="panel-close" onclick="toggleRatingsPanel()">✕ 닫기</button>
+      </div>
+    </div>
+    <div class="ratings-grid" id="ratingsGrid"></div>
+  </div>
+
+  <!-- COMPARE PANEL -->
+  <div class="panel compare-panel" id="comparePanel">
+    <div class="panel-header">
+      <h2>⚖️ 서비스 비교</h2>
+      <div style="display:flex;gap:6px">
+        <button class="panel-close" onclick="clearSelection()">🗑️ 초기화</button>
+        <button class="panel-close" onclick="closeCompare()">✕ 닫기</button>
+      </div>
+    </div>
+    <div class="compare-wrap" id="compareContent"></div>
+  </div>
+
+  <!-- QUIZ PANEL -->
+  <div class="panel quiz-panel" id="quizPanel">
+    <div id="quizContent"></div>
+  </div>
+
+  <!-- CARDS VIEW -->
+  <div id="cardView">
+    <div class="card-grid" id="cardGrid"></div>
+    <div class="empty" id="emptyState" style="display:none">
+      🔍
+      <p>검색 결과가 없습니다.</p>
+    </div>
+  </div>
+
+  <!-- TABLE VIEW -->
+  <div id="tableView" style="display:none">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>서비스</th><th>개발사</th><th>출시</th><th>무료플랜</th>
+            <th>유료가격</th><th>한국어</th><th>파일</th><th>웹검색</th>
+            <th>핵심특징</th><th>URL</th><th>비교</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>
+    <strong>청암대학교 간호학과</strong> · 디지털리터러시와 AI활용 · AI융합 간호정보학<br>
+    담당교수: <strong>제프리 교수</strong><br>
+    ※ 가격 정보는 2025~2026년 3월 기준이며 변동될 수 있습니다. 각 서비스 공식 사이트를 확인하세요.
+  </p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const SERVICES = [
+  {
+    id:'chatgpt', name:'ChatGPT', company:'OpenAI', year:2022,
+    emoji:'🟢', color:'#10a37f', bg:'#d1fae5',
+    url:'https://chatgpt.com',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      'GPT-5 시리즈 (Instant·Thinking·Pro): 추론·코딩·멀티모달 통합 (2025년 8월 출시)',
+      'Custom GPTs: 간호 특화 맞춤형 챗봇 직접 생성 및 공유',
+      'Deep Research: 복수 웹소스를 자동 수집·분석하는 심층 조사 기능',
+      'Agent 모드 (Claude Code 연동): 30분 이상 자율 작업 수행',
+      'Sora 영상 생성·이미지 생성(GPT Image) 내장, ChatGPT 주간 활성 사용자 7억 명(2025년 8월)'
+    ],
+    strength:'세계 최대 사용자 기반(7억 명)과 가장 풍부한 플러그인 생태계. GPT-5는 의학 문헌 요약·케어플랜 초안·퀴즈 생성에서 높은 완성도를 보임. 다양한 파일 형식 업로드 후 즉시 분석 가능. 2025년 기준 AI 분야 가장 많이 사용되는 서비스.',
+    scenarios:[
+      {title:'📋 케어플랜 초안 작성', text:'환자 정보 입력 후 NANDA 형식의 간호진단·목표·중재 초안 생성'},
+      {title:'🔍 Deep Research 활용', text:'간호 주제(예: 욕창 예방)를 입력하면 최신 논문·가이드라인을 자동 수집하여 종합 보고서로 정리'}
+    ],
+    prompts:[
+      {label:'케어플랜 작성', text:'당뇨병 2형 환자(65세 남성, BMI 28)에 대한 간호진단 3가지를 NANDA 형식으로 작성하고, 각각의 단기·장기 목표와 구체적인 간호중재를 제시해줘.'},
+      {label:'퀴즈 문제 생성', text:'기본간호학 "산소화" 단원 내용을 바탕으로 간호사 국가고시 스타일의 5지선다 문제 5개를 만들어줘. 정답과 해설도 포함해줘.'},
+      {label:'Deep Research 활용', text:'욕창(Pressure Ulcer) 예방을 위한 근거 기반 간호 중재를 Deep Research 기능으로 최신 연구(2023~2025)를 조사하여 단계별로 정리해줘. 출처도 함께 제시해줘.'}
+    ],
+    pricing:[
+      {name:'Free', color:'#10a37f', amount:'무료', krw:'', features:['GPT-5 접근 (사용량 제한 후 GPT-5 Mini 전환)','웹 검색·파일 업로드 기본 제공','이미지 생성 일 2~3회 제한','GPT Store 접근 가능']},
+      {name:'Plus', color:'#f59e0b', amount:'$20/월', krw:'(약 ₩28,000)', features:['GPT-5 사용량 Free 대비 5배 이상','GPT-5 Thinking 모드 (주 3,000회)','고급 데이터 분석·이미지 생성 확장','Sora 영상 생성 제한적 접근','우선 접속 및 신기능 조기 체험']},
+      {name:'Pro', color:'#e11d48', amount:'$200/월', krw:'(약 ₩278,000)', features:['GPT-5 Pro 무제한 접근','최대 추론 심도 (최고 난이도 과제 처리)','Sora Pro 영상 생성','ChatGPT Record (회의 녹음·요약)','베타 기능 최우선 접근']},
+      {name:'Business', color:'#6366f1', amount:'$25~30/인/월', krw:'(연간 $25 / 월간 $30)', features:['GPT-5.2 메시지 무제한','팀 공유 워크스페이스 + 관리자 콘솔','대화 데이터 학습 제외 보장','Custom GPTs 조직 내 공유','2인 이상 이용 가능']}
+    ],
+    priceNote:'학생은 Free 플랜으로도 학습 활용 가능. 실습·시험 기간에는 Plus 한시 구독 권장. Pro는 심층 연구가 필요한 전문가 수준. ※ 2025년 8월 Team → Business로 명칭 변경.'
+  },
+  {
+    id:'gemini', name:'Gemini', company:'Google DeepMind', year:2023,
+    emoji:'🔵', color:'#4285f4', bg:'#dbeafe',
+    url:'https://gemini.google.com',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      'Gemini 3.1 Pro / Flash 최신 모델 (2026년 3월 기준): 멀티모달 추론 최강',
+      'Google 검색·Gmail·Drive·Docs·Meet와 완벽 실시간 통합',
+      '컨텍스트 최대 200만 토큰 — 방대한 문서 한 번에 처리',
+      'Deep Research: 웹 자동 탐색 + 종합 보고서 생성',
+      'Veo 3 영상 생성·Imagen 4 이미지 생성 내장 (AI Pro 이상)'
+    ],
+    strength:'Google 생태계 통합이 핵심. 구글 클래스룸·드라이브 파일을 직접 참조하여 과제 작성·요약·번역 원스톱 처리. 실시간 Google 검색 결과 반영으로 최신 의학 정보 신속 조회. 학교 Google 계정 보유 학생은 즉시 활용 가능.',
+    scenarios:[
+      {title:'🔍 최신 간호 지침 검색', text:'실시간 웹 검색으로 WHO·질병관리청 최신 간호 가이드라인 즉시 조회'},
+      {title:'📁 Drive 연동 학습', text:'드라이브 강의자료를 요약하고 Gmail 과제 제출 이메일 초안 자동 생성'}
+    ],
+    prompts:[
+      {label:'최신 지침 검색', text:'2024~2025년 최신 낙상 예방 간호 가이드라인을 검색해서 핵심 중재 5가지를 출처와 함께 정리해줘. 병원 환경과 지역사회 환경을 구분해서 설명해줘.'},
+      {label:'Google Drive 연동', text:'내 구글 드라이브의 해부생리학 강의자료를 참고하여 심장 단원의 핵심 개념 요약본을 만들어줘. 표 형식으로 정리하고 임상 연결 포인트를 추가해줘.'},
+      {label:'Deep Research 활용', text:'간호사 소진(Burnout) 예방을 위한 조직 수준의 중재 전략을 Deep Research로 최신 국내외 연구를 바탕으로 분석하고 실용적인 제언을 제시해줘.'}
+    ],
+    pricing:[
+      {name:'Free', color:'#4285f4', amount:'무료', krw:'', features:['Gemini 3 Flash (Auto 모드) 무제한','Google 검색·Gmail·Drive·Docs 연동','기본 이미지 생성 (일 제한)','Deep Research 기본 제공']},
+      {name:'AI Plus', color:'#34a853', amount:'~$5/월', krw:'(약 ₩7,000 · 신흥국 우선 출시)', features:['Free 대비 사용량 확대','최신 모델 업데이트 우선 접근','이미지 생성 품질 향상','40개국 이상 순차 출시 중']},
+      {name:'AI Pro', color:'#f59e0b', amount:'$19.99/월', krw:'(약 ₩28,000)', features:['Gemini 2.5 Pro (1M 토큰 컨텍스트)','NotebookLM Pro 포함 (5배 한도)','Google One 2TB 클라우드','Gmail·Drive AI 기능 고급 활성화','Veo·Imagen 4 이미지 생성 확장']},
+      {name:'AI Ultra', color:'#e11d48', amount:'$249.99/월', krw:'(약 ₩348,000)', features:['최고 Gemini 모델 접근','AI Credits 포함 (Whisk·Flow 영상 생성)','NotebookLM Ultra (200 Audio Overviews/일)','Jules 코딩 에이전트 최고 한도','전문 크리에이터·개발자 대상']}
+    ],
+    priceNote:'학교 Google 계정으로 Free 플랜을 먼저 충분히 활용하길 권장. AI Pro 구독 시 NotebookLM Pro가 함께 포함되어 실용적. 1개월 무료 체험 제공.'
+  },
+  {
+    id:'claude', name:'Claude', company:'Anthropic', year:2023,
+    emoji:'🟠', color:'#d97706', bg:'#fef3c7',
+    url:'https://claude.ai',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      'Claude Opus 4.6 (2026년 2월 출시): 코딩·에이전트·복잡 추론 최강 모델',
+      '1M 토큰 컨텍스트 (정식 GA): 논문·코드베이스 전체를 한 번에 분석',
+      '안전성 최우선 설계 (Constitutional AI) — 의료 정보 한계 명확히 표시',
+      'Claude Code: 터미널·IDE 연동 AI 코딩 에이전트 (2025년 5월 출시)',
+      'Agent Teams: 복수 AI가 병렬로 협업하는 다중 에이전트 작업 지원'
+    ],
+    strength:'긴 학술 자료 분석에서 독보적. 1M 토큰으로 논문 수십 편·교재 전체를 한 번에 처리. 안전 중심 설계로 의료 정보의 한계를 명확히 표시하여 신뢰성 높음. Anthropic 연간 매출 30억 달러 돌파(2025년 기준)로 성장 중인 서비스.',
+    scenarios:[
+      {title:'📄 논문 심층 분석', text:'간호 연구 논문 PDF 업로드 후 목적·방법·결론·시사점 구조화 정리'},
+      {title:'✍️ 학술 보고서 작성', text:'실습 일지·케이스 스터디 초안 작성 및 논리 구조 피드백'}
+    ],
+    prompts:[
+      {label:'논문 분석 및 요약', text:'첨부한 간호 연구 논문을 분석하여 ①연구 목적 ②연구 방법(대상·도구·분석) ③주요 결과 ④결론 ⑤간호 실무 시사점 순서로 체계적으로 정리해줘. 전문용어는 쉽게 설명해줘.'},
+      {label:'케이스 스터디 보고서', text:'ICU 입원 환자 사례: 78세 여성, COPD 악화, SpO2 82%, RR 28회/분. 가장 우선순위가 높은 간호진단 2가지를 선정하고, 근거 중심의 간호중재 계획을 단계별로 서술해줘.'},
+      {label:'보고서 문체 교정', text:'다음 실습 일지 내용을 학술적 보고서 문체로 다듬어줘. 논리적 흐름을 개선하고 간호 전문용어를 적절히 사용하되, 원래 의미는 유지해줘. [여기에 내 글 붙여넣기]'}
+    ],
+    pricing:[
+      {name:'Free', color:'#d97706', amount:'무료', krw:'', features:['Claude Sonnet 4.6 (사용량 제한)','파일 업로드 (PDF·이미지) 지원','웹 검색 기본 제공','5시간마다 사용량 리셋']},
+      {name:'Pro', color:'#f59e0b', amount:'$20/월', krw:'(연간 약 $17/월 · ₩28,000)', features:['Free 대비 사용량 5배','Opus 4.6·Sonnet 4.6·Haiku 4.5 전체 접근','Projects 기능 (주제별 대화 관리)','Claude Code 기본 포함','우선 접속 및 신기능 조기 체험']},
+      {name:'Max 5x', color:'#e11d48', amount:'$100/월', krw:'(약 ₩139,000)', features:['Pro 대비 사용량 5배 (Free의 25배)','Opus 4.6 우선 접근','Claude Code 완전 활성화','하루 중단 없는 집중 작업 가능','최신 모델 최우선 접근']},
+      {name:'Max 20x', color:'#7c3aed', amount:'$200/월', krw:'(약 ₩278,000)', features:['Pro 대비 사용량 20배 (Free의 100배)','1M 토큰 컨텍스트 기본 제공','Agent Teams 멀티 에이전트 지원','ChatGPT Pro와 동일 가격대 최강 코딩','Cowork 파일·워크플로 자동화']},
+      {name:'Team', color:'#6366f1', amount:'$25~30/인/월', krw:'(연간 $25 / 월간 $30)', features:['Pro 모든 기능 포함','팀 워크스페이스 공유','관리자 대시보드·사용량 분석','대화 데이터 학습 제외 보장','5인 이상 권장']}
+    ],
+    priceNote:'Free는 일상적 학습용. 논문 분석·케이스 연구 집중 시 Pro($20) 권장. Max는 개발자·연구자 대상. ※ API: Opus 4.6 $5/$25, Sonnet 4.6 $3/$15, Haiku 4.5 $1/$5 (1M 토큰 기준).'
+  },
+  {
+    id:'perplexity', name:'Perplexity', company:'Perplexity AI', year:2022,
+    emoji:'🟣', color:'#6366f1', bg:'#ede9fe',
+    url:'https://www.perplexity.ai',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      '실시간 웹 검색 결과를 AI가 즉시 분석·요약 — 검색엔진 + AI의 결합',
+      '모든 답변에 출처(URL) 자동 인용 — 신뢰도 직접 검증 가능',
+      'Focus 모드: 학술(Academic)·YouTube·Reddit 등 소스 선택',
+      'Perplexity Labs: 대시보드·스프레드시트·프레젠테이션·웹앱 자동 생성',
+      'Comet 브라우저 (Max 전용): AI가 웹을 자동 탐색하여 데이터 수집'
+    ],
+    strength:'정보 검색과 AI 분석의 결합이 핵심. 최신 의학 가이드라인·약물 부작용 연구·간호 이슈를 출처와 함께 실시간 제공. 학술 목적의 신뢰도 검증에 최적화. 리포트 작성 시 참고문헌 자동 수집에 특히 유용.',
+    scenarios:[
+      {title:'🔬 의약품 최신 연구 조회', text:'약물명으로 Academic 모드 검색 시 최신 논문 출처와 함께 부작용·주의사항 요약 제공'},
+      {title:'📖 참고문헌 자동 수집', text:'리포트 주제 검색 후 관련 학술 자료·출처 자동 정리로 참고문헌 작성 지원'}
+    ],
+    prompts:[
+      {label:'최신 약물 연구 검색', text:'메트포르민(Metformin)의 2023~2025년 최신 임상 연구에서 새롭게 보고된 부작용이나 금기 사항을 학술 출처와 함께 정리해줘. Academic 모드로 검색해줘.'},
+      {label:'간호 이슈 리서치', text:'간호사 번아웃(Burnout) 예방을 위한 병원 차원의 중재 전략을 최근 5년 연구 결과를 기반으로 정리해줘. 주요 연구 출처도 포함해줘.'},
+      {label:'비교 정보 수집', text:'중환자실(ICU) 간호사와 일반 병동 간호사의 업무 스트레스를 비교 분석한 최신 국내외 연구를 찾아 핵심 내용과 출처를 표로 정리해줘.'}
+    ],
+    pricing:[
+      {name:'Free', color:'#6366f1', amount:'무료', krw:'', features:['기본 웹 검색 무제한','Pro 검색 일 5회 (고급 AI 모델)','출처 자동 인용 기본 제공','파일 업로드 제한적 지원']},
+      {name:'Pro', color:'#f59e0b', amount:'$20/월', krw:'(연간 $200 · 약 ₩28,000)', features:['Pro 검색 일 300회 이상','GPT-5·Claude Opus 4·Sonar 모델 선택','파일 업로드 무제한 (PDF·CSV 등)','이미지 생성 (DALL-E·SDXL)','API 크레딧 $5/월 포함']},
+      {name:'Education Pro', color:'#16a34a', amount:'$10/월', krw:'(학생·교원 인증 시 · 약 ₩14,000)', features:['Pro 플랜 모든 기능','SheerID로 학생/교원 신분 인증 필요','Perplexity Academic 확장 접근','학습 최적화 기능 포함']},
+      {name:'Max', color:'#e11d48', amount:'$200/월', krw:'(약 ₩278,000)', features:['최신 AI 모델 무제한 접근','Labs 무제한 (보고서·앱·시각화 생성)','Comet 브라우저 독점 접근','신기능 2주 조기 체험','우선 지원 서비스']}
+    ],
+    priceNote:'리포트·과제 출처 확인이 필수인 학생에게 Free 플랜만으로도 충분히 유용. 학생·교원 인증 시 Education Pro($10)가 최고의 가성비. Pro는 집중 연구 시 권장.'
+  },
+  {
+    id:'notebooklm', name:'NotebookLM', company:'Google', year:2023,
+    emoji:'📓', color:'#0891b2', bg:'#e0f7fa',
+    url:'https://notebooklm.google.com',
+    plan:'free', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      '업로드 자료 기반 답변 우선 — 환각 최소화 (소스 기반 AI의 핵심 강점)',
+      '🌐 Discover Sources: AI가 관련 웹 페이지·논문을 자동 탐색해 노트북 소스로 추가',
+      'Audio Overview: 80개 이상 언어로 AI 팟캐스트 자동 생성 (Deep Dive·Brief·Debate 형식)',
+      'Video Overview: 자료를 시각적 영상 요약으로 자동 변환 (2025년 신기능)',
+      'Slide Deck·인포그래픽 자동 생성 (프레젠테이션 제작 지원)'
+    ],
+    strength:'강의자료 기반 답변으로 환각 최소화가 핵심 강점이면서, Discover Sources로 관련 웹 소스까지 자동 탐색하여 추가할 수 있음. 즉, "업로드 자료 + 웹 탐색 소스"를 함께 활용 가능. Audio Overview로 이동 중 청취 학습, Slide Deck으로 발표자료 자동 생성. 2025년 기준 전 세계 수천만 명 사용. iOS/Android 앱 지원.',
+    scenarios:[
+      {title:'🎓 강의자료 기반 시험 준비', text:'교수 제공 PDF 여러 개 업로드 후 "예상 시험 문제 10개 만들어줘" 요청'},
+      {title:'🌐 Discover Sources로 리포트 강화', text:'"욕창 예방" 주제 노트북에서 Discover Sources 실행 → AI가 관련 최신 웹 소스·논문을 자동으로 찾아 추가 → 업로드 자료 + 웹 자료를 함께 분석하여 리포트 작성'}
+    ],
+    prompts:[
+      {label:'시험 예상 문제 생성', text:'업로드된 기본간호학 3~5장 강의자료를 분석하여 간호사 국가고시 스타일의 예상 문제 10개를 만들어줘. O/X 4개, 5지선다 6개로 구성하고 정답과 해설 포함해줘.'},
+      {label:'Discover Sources 활용', text:'이 노트북의 자료를 바탕으로 관련된 최신 웹 소스나 연구 자료를 더 찾아줘. (노트북 하단 "+ 소스 추가 → 웹에서 검색" 또는 Discover Sources 버튼 클릭 후 주제 입력)'},
+      {label:'Slide Deck 생성 요청', text:'업로드된 강의자료를 바탕으로 "감염 예방 간호" 주제의 발표 슬라이드를 만들어줘. 핵심 내용을 시각적으로 구성하고 출처는 반드시 원본 자료에서 인용해줘.'}
+    ],
+    pricing:[
+      {name:'Free (기본)', color:'#0891b2', amount:'무료', krw:'', features:['노트북 100개, 소스 50개/노트북','채팅 쿼리 일 50회','Audio Overview 일 10회','Slide Deck·인포그래픽 기본 제공','Google 계정만 있으면 이용 가능']},
+      {name:'Pro (Google AI Pro)', color:'#f59e0b', amount:'$19.99/월', krw:'(약 ₩28,000)', features:['노트북 500개, 소스 300개/노트북 (5배)','채팅 쿼리 일 500회 (10배)','Audio Overview 일 20회 이상','워터마크 없는 Slide Deck 출력 일부 지원','Google One 2TB 스토리지 포함']},
+      {name:'Ultra (Google AI Ultra)', color:'#e11d48', amount:'$249.99/월', krw:'(약 ₩348,000)', features:['Audio Overview 일 200회 무제한','Video Overview 일 200회 무제한','Deep Research 일 200회 무제한','보고서·플래시카드·퀴즈 일 1,000회','워터마크 완전 제거, Gemini 최고 모델 접근']}
+    ],
+    priceNote:'학생에게 가장 추천하는 무료 도구. 시험 준비·강의자료 기반 학습에 특히 효과적. Google AI Pro($19.99) 구독 시 Gemini Pro·Drive AI 기능도 함께 활용 가능.'
+  },
+  {
+    id:'aistudio', name:'Google AI Studio', company:'Google', year:2023,
+    emoji:'⚙️', color:'#7c3aed', bg:'#ede9fe',
+    url:'https://aistudio.google.com',
+    plan:'free', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      'Gemini 최신 모델(3.1 Pro·3.1 Flash) API 키로 무료 직접 접근',
+      '🌐 Grounding with Google Search: 실시간 웹 검색 결과를 AI 답변에 자동 반영',
+      '통합 Playground: Gemini 채팅·GenMedia(Veo 3.1 영상)·TTS·Live 모델 한 화면에서 실험',
+      '시스템 프롬프트 커스터마이징 → 특화 AI 튜터 직접 제작',
+      'API 키 발급 및 Python·JS 코드 스니펫 자동 생성, 월별 지출 한도(Spend Cap) 설정'
+    ],
+    strength:'개발자·교육자용 플랫폼. Grounding with Google Search를 켜면 실시간 최신 정보 기반 답변이 가능. 교수가 간호학과 특화 AI 튜터(예: 국시 문제 생성기)를 직접 제작하거나, 학생이 프롬프트 엔지니어링·Temperature 조정을 직접 실습하는 데 최적화. 신용카드 없이 무료 API 키 즉시 발급 가능.',
+    scenarios:[
+      {title:'🛠 AI 튜터 직접 제작', text:'시스템 프롬프트로 "간호학 국시 튜터"를 만들어 맞춤형 AI와 대화 실습'},
+      {title:'🌐 Grounding 웹 검색 실습', text:'Grounding with Google Search 버튼을 켜고 "2025년 최신 간호사 국시 출제 경향"을 질문 → 실시간 검색 결과가 반영된 답변과 꺼졌을 때 답변을 비교 관찰'}
+    ],
+    prompts:[
+      {label:'시스템 프롬프트 예시', text:'[System Prompt 입력란에 작성] 너는 청암대학교 간호학과 1학년 학생을 위한 해부생리학 튜터야. 어려운 해부학 용어는 쉬운 비유로 설명하고, 임상 간호와 연결한 예시를 반드시 포함해. 학생이 틀린 개념을 말하면 친절하게 교정해줘.'},
+      {label:'Grounding with Google Search 실습', text:'[Grounding with Google Search 버튼을 켠 후 입력] 2024~2025년 최신 간호사 국가고시 출제 경향과 고득점 전략을 검색해서 분석해줘. 특히 기본간호학과 성인간호학 중점 출제 단원을 정리해줘.'},
+      {label:'Temperature 실험', text:'Temperature를 0.1(정확성), 0.7(균형), 1.5(창의성)으로 각각 설정하여 "욕창 간호 방법을 환자에게 설명해줘" 프롬프트를 실행하고, 세 결과물의 문체와 내용 차이를 비교 관찰해보세요.'}
+    ],
+    pricing:[
+      {name:'Free (API)', color:'#7c3aed', amount:'무료', krw:'(신용카드 불필요)', features:['Gemini 2.5 Pro: 분당 5회/일 100회','Gemini 2.5 Flash: 분당 10회/일 250회','Gemini 2.5 Flash-Lite: 분당 15회/일 1,000회','1M 토큰 컨텍스트 무료 사용']},
+      {name:'Paid Tier (Google Cloud)', color:'#f59e0b', amount:'종량제', krw:'(토큰당 과금)', features:['Gemini 2.5 Pro: 입력 $1.25/1M 토큰 (200K 이하)','Gemini 2.5 Flash: 입력 $0.10/1M 토큰','Gemini 3.1 Pro: 입력 $2.00/1M 토큰 (최신)','고속·무제한 처리, 기업·서비스 개발용']}
+    ],
+    priceNote:'학습·실습 목적이면 Free 플랜(Gemini 2.5 Pro 무료)으로 충분. ⚠️ Grounding with Google Search는 무료 티어에서도 사용 가능하나, 유료 전환 시 검색 쿼리당 $35/1,000회 별도 과금. 수업 실습 시 Free 티어에서 사용 권장. API 키 발급 후 Python 코드와 연동하면 고급 AI 활용 실습 가능.'
+  },
+  {
+    id:'copilot', name:'Microsoft Copilot', company:'Microsoft', year:2023,
+    emoji:'🪟', color:'#0078d4', bg:'#dbeafe',
+    url:'https://copilot.microsoft.com',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      '🏫 학교 Microsoft 365 계정(A1/A3)으로 Copilot Chat 무료 사용 가능',
+      'Word·PowerPoint·Excel·Teams·OneNote와 완벽 통합 (GPT-5 기반)',
+      'Study Mode: 플래시카드·빈칸채우기·퀴즈 자동 생성 (2025년 신기능)',
+      'Deep Research: 출처 있는 학술 자료 자동 수집 및 인용 보고서 생성',
+      'Copilot Pages: 공동 편집 가능한 AI 학습 노트·에세이 개요 생성'
+    ],
+    strength:'한국 대학 대부분이 Microsoft 365를 사용하므로 별도 가입 없이 학교 계정으로 즉시 활용 가능. Word에서 실습 보고서 직접 작성·교정, PowerPoint 발표자료 자동 생성, Teams 회의 요약까지 학교 생활 전반을 지원. Study Mode로 강의자료를 퀴즈·플래시카드로 즉시 변환.',
+    scenarios:[
+      {title:'📝 실습 보고서 자동 작성', text:'Word에서 Copilot에 "COPD 환자 케이스 스터디 보고서 초안 작성해줘"라고 입력하면 바로 Word 문서에 초안 생성'},
+      {title:'🎓 Study Mode 퀴즈 학습', text:'강의자료를 업로드하고 Study Mode를 켜면 플래시카드·빈칸채우기·퀴즈가 자동 생성 — 시험 직전 복습에 최적'}
+    ],
+    prompts:[
+      {label:'Word 보고서 초안 생성', text:'[Word에서 Copilot 사용] 간호학과 3학년 실습 케이스 스터디 보고서를 작성해줘. 환자: 72세 여성, 진단: 심부전(Heart Failure). 구성: 환자 사정 → 간호진단(NANDA 형식) → 간호목표 → 간호중재(근거 포함) → 평가 순서로 작성해줘.'},
+      {label:'PowerPoint 발표자료 생성', text:'[PowerPoint에서 Copilot 사용] "노인 낙상 예방 간호 교육"을 주제로 10장 분량의 발표자료를 만들어줘. 대상: 병원 입원 노인 환자. 핵심 내용: 낙상 위험 사정, 환경 개선, 교육 포인트 포함.'},
+      {label:'Deep Research 학술 자료 수집', text:'간호사 직무 스트레스와 소진(Burnout)의 관계에 관한 최신 연구(2023~2025)를 Deep Research로 조사하고, 주요 연구 결과와 참고문헌을 APA 형식으로 정리해줘.'}
+    ],
+    pricing:[
+      {name:'Copilot Chat (무료)', color:'#0078d4', amount:'무료', krw:'(학교 M365 계정)', features:['학교 M365 A1/A3 계정으로 무제한 사용','GPT-5 기반 대화 (기업 데이터 보호)','파일 업로드·이미지 생성·웹 검색 포함','Copilot Pages·Study Mode 기본 제공']},
+      {name:'M365 Copilot (교육기관)', color:'#f59e0b', amount:'$18/인/월', krw:'(약 ₩25,000 · 교육기관 요금)', features:['Word·PPT·Excel·Outlook 내 Copilot 완전 통합','기관 문서·이메일·회의 데이터 AI 분석','Teams 회의 자동 요약 및 액션아이템 추출','Canvas·Blackboard·Moodle LMS 연동']},
+      {name:'개인 M365 Personal', color:'#16a34a', amount:'$6.99/월', krw:'(학생 50% 할인 적용 시 · 약 ₩10,000)', features:['1TB OneDrive 스토리지','Word·Excel·PPT·OneNote 앱','Copilot 기본 기능 포함','대학생 3개월 무료 체험 (미국 기준)']}
+    ],
+    priceNote:'학교 Microsoft 365 계정이 있다면 Copilot Chat은 완전 무료. 청암대학교에서 M365를 사용한다면 추가 비용 없이 바로 활용 가능. 먼저 학교 계정으로 copilot.microsoft.com에 접속해 보세요.'
+  },
+  {
+    id:'canva', name:'Canva AI', company:'Canva', year:2013,
+    emoji:'🎨', color:'#7c3aed', bg:'#ede9fe',
+    url:'https://www.canva.com',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:false,
+    features:[
+      'Magic Studio: 25개 이상 AI 디자인 도구 통합 (이미지·텍스트·영상 생성)',
+      'Magic Design: 텍스트 한 줄로 완성형 슬라이드·포스터·SNS 콘텐츠 자동 생성',
+      'Magic Write: AI 문장 생성·교정·번역 (100개 이상 언어 지원)',
+      'Dream Lab: Leonardo.ai 통합 고품질 이미지 생성 (2025년 신기능)',
+      '140만 개 이상 프리미엄 템플릿 — 간호 교육 포스터·인포그래픽·학습자료'
+    ],
+    strength:'디자인 전공 없이도 전문가 수준의 시각 자료 제작 가능. 간호 교육 포스터, 건강 교육 인포그래픽, 케이스 스터디 시각화, 학과 행사 홍보물 제작에 최적화. Magic Switch로 프레젠테이션을 SNS 카드뉴스로 1클릭 변환. 전 세계 월 1억 7천만 명 사용.',
+    scenarios:[
+      {title:'🖼 간호 교육 포스터 제작', text:'"손 씻기 5단계 교육 포스터"를 Magic Design에 입력하면 전문가 수준의 인포그래픽 자동 생성'},
+      {title:'📊 케이스 스터디 인포그래픽', text:'환자 사례 데이터를 입력하면 시각적으로 정리된 케이스 스터디 시각화 자료 자동 생성 → 발표·보고서에 활용'}
+    ],
+    prompts:[
+      {label:'Magic Design 포스터 생성', text:'[Canva Magic Design 사용] "당뇨병 환자를 위한 발 관리 교육 포스터"를 만들어줘. 핵심 내용: 매일 발 관찰법, 올바른 발 씻기, 위험 증상 5가지, 주의사항. 색상은 의료기관에 어울리는 파란색·흰색 계열로.'},
+      {label:'발표 슬라이드 자동 생성', text:'[Canva Presentation 사용] "노인 욕창 예방 간호 교육" 발표자료 8장을 만들어줘. 대상: 요양병원 보호자. 핵심: 욕창 단계별 사진, 체위 변경 방법, 피부 관리, 영양 중요성. 따뜻하고 이해하기 쉬운 디자인으로.'},
+      {label:'Magic Write 건강 교육 자료', text:'[Canva Magic Write 사용] 고혈압 환자에게 배포할 "혈압 자가 측정 방법" 안내문을 작성해줘. 초등학생도 이해할 수 있는 쉬운 언어로, 그림 설명이 들어갈 공간을 고려하여 단계별로 간결하게.'}
+    ],
+    pricing:[
+      {name:'Free', color:'#7c3aed', amount:'무료', krw:'', features:['Magic Write 50회 (총)', 'Text-to-Image 50회 (총)','기본 템플릿·편집 기능','5GB 클라우드 스토리지','무료 협업 기능 포함']},
+      {name:'Pro', color:'#f59e0b', amount:'$15/월', krw:'(연간 $120 · 약 ₩21,000/월)', features:['Magic Studio 전체 기능 (월 500회)','1억 4천만 이상 프리미엄 에셋','Brand Kit 최대 1,000개','배경 제거·Magic Switch 무제한','1TB 클라우드 스토리지']},
+      {name:'교육 (무료)', color:'#16a34a', amount:'무료', krw:'(Canva for Education)', features:['K-12 교사·학생 Pro 기능 무료 제공','LMS(구글 클래스룸 등) 연동','교육용 전용 템플릿 제공','교사 인증 후 학생 계정 초대 가능']}
+    ],
+    priceNote:'대학생은 Free 플랜만으로도 충분히 활용 가능. Pro($15/월)는 브랜드 키트·고급 AI 기능이 필요한 경우. K-12 교육기관은 무료이나 대학은 별도 확인 필요. Canva 계정 생성 후 바로 사용 가능.'
+  },
+  {
+    id:'gamma', name:'Gamma', company:'Gamma App', year:2020,
+    emoji:'⚡', color:'#f59e0b', bg:'#fef3c7',
+    url:'https://gamma.app',
+    plan:'freemium', korean:true, fileUpload:true, webSearch:true,
+    features:[
+      '텍스트 프롬프트 1줄 → 완성형 프레젠테이션·문서·웹페이지 60초 내 생성',
+      'Gamma Agent (3.0): 웹 검색으로 최신 정보를 반영한 슬라이드 자동 업데이트',
+      '카드 기반 스크롤 형식 — PowerPoint보다 현대적·모바일 친화적 발표',
+      'PDF·Word·기존 슬라이드 업로드 → AI가 자동으로 재구성·디자인',
+      '2025년 11월 기준 7,000만 명 사용, 매일 100만 개 이상의 콘텐츠 생성'
+    ],
+    strength:'디자인 능력 없이도 전문가 수준의 발표자료를 60초 안에 생성. 간호학과 케이스 스터디 발표, 실습 결과 보고, 간호 교육 자료 제작에 특화. Gamma Agent가 웹 검색으로 최신 의학 정보를 자동 반영. PDF·Word 업로드로 기존 자료를 즉시 슬라이드화.',
+    scenarios:[
+      {title:'⚡ 케이스 스터디 발표자료 즉시 생성', text:'"COPD 환자 간호 케이스 스터디 발표 10슬라이드" 입력 → 60초 안에 완성형 발표자료 생성 → PDF 또는 PPT로 다운로드'},
+      {title:'📄 강의 노트 → 슬라이드 변환', text:'교수 제공 PDF 강의자료를 업로드하면 AI가 핵심 내용을 추출하여 발표용 슬라이드로 자동 재구성'}
+    ],
+    prompts:[
+      {label:'케이스 스터디 발표 생성', text:'[Gamma.app에서 "Generate" 클릭 후 입력] 간호학과 3학년 케이스 스터디 발표자료를 만들어줘. 주제: 급성 심근경색(AMI) 환자 간호. 구성: 질환 개요 → 환자 사정 → 주요 간호진단 3개 → 간호중재 → 평가 지표 → 참고문헌. 전문적이고 깔끔한 의료 스타일로.'},
+      {label:'강의자료 슬라이드 변환', text:'[Gamma.app에서 "Import" 클릭 후 PDF 업로드] 첨부한 기본간호학 강의 PDF를 15장 분량의 발표 슬라이드로 변환해줘. 각 슬라이드에 핵심 개념 1~3가지만 간결하게 정리하고, 임상 적용 포인트는 별도 슬라이드로 강조해줘.'},
+      {label:'Gamma Agent 웹 검색 활용', text:'[Gamma Agent 기능 사용] 2024~2025년 최신 간호사 번아웃 예방 전략을 웹에서 검색하여 최신 데이터와 통계를 포함한 8슬라이드 발표자료를 만들어줘. 출처도 마지막 슬라이드에 포함해줘.'}
+    ],
+    pricing:[
+      {name:'Free', color:'#f59e0b', amount:'무료', krw:'', features:['AI 크레딧 400개 (프레젠테이션 약 10개 생성)','무제한 슬라이드 뷰어·편집','PDF·PPT 내보내기 (Gamma 워터마크)','공유 링크 생성 가능']},
+      {name:'Plus', color:'#0891b2', amount:'$10/월', krw:'(약 ₩14,000)', features:['AI 크레딧 무제한','Gamma 워터마크 제거','PDF·PPT 고품질 내보내기','고급 테마·폰트 사용 가능']},
+      {name:'Pro', color:'#e11d48', amount:'$20/월', krw:'(연간 $15/월 · 약 ₩21,000)', features:['Plus 모든 기능 포함','커스텀 도메인 웹페이지 발행','상세 조회 분석 (누가·얼마나 봤는지)','한 번에 최대 60슬라이드 생성','Gamma Agent 고급 기능 (웹 검색 기반 자동 업데이트)']}
+    ],
+    priceNote:'Free 플랜 400 크레딧으로 약 10개 프레젠테이션 생성 가능 — 학기당 과제·발표에 충분. Plus($10)는 워터마크 제거와 무제한 생성이 필요할 때. 💡 gamma.app에서 바로 시작, 회원가입만으로 즉시 사용 가능.'
+  }
+];
+
+const QUIZ_ALL = [
+  // ── BEGINNER (초급) ──
+  {
+    difficulty:'beginner',
+    q:'모든 답변에 출처(URL)를 자동으로 인용하며, 학술 논문만 검색하는 Focus 모드를 제공하는 AI 서비스는?',
+    hint:'💡 힌트: 정보의 신뢰도를 직접 확인하고 싶을 때 가장 유용합니다.',
+    answer:'perplexity', options:['chatgpt','perplexity','gemini','notebooklm']
+  },
+  {
+    difficulty:'beginner',
+    q:'내가 업로드한 강의자료·논문을 소스로 답변하며, Discover Sources 기능으로 관련 웹 소스를 자동 탐색해 노트북에 추가할 수 있고, Audio Overview로 팟캐스트를 생성하는 서비스는?',
+    hint:'💡 힌트: 오디오 팟캐스트 자동 변환 기능도 있습니다.',
+    answer:'notebooklm', options:['claude','notebooklm','chatgpt','aistudio']
+  },
+  {
+    difficulty:'beginner',
+    q:'Gmail, Google Drive, Google Classroom과 통합되어 드라이브 파일을 직접 참조하여 요약·이메일 작성을 지원하는 서비스는?',
+    hint:'💡 힌트: Google이 개발했으며 실시간 검색 결과가 반영됩니다.',
+    answer:'gemini', options:['chatgpt','gemini','aistudio','notebooklm']
+  },
+  {
+    difficulty:'beginner',
+    q:'프롬프트 엔지니어링 실험 전용 플랫폼으로, "Grounding with Google Search" 버튼으로 실시간 웹 검색을 연동하고 무료 API 키를 발급받아 맞춤형 AI 튜터를 직접 만들 수 있는 Google 도구는?',
+    hint:'💡 힌트: 개발자·교육자를 위한 실험 환경이며, 신용카드 없이 즉시 사용 가능합니다.',
+    answer:'aistudio', options:['notebooklm','aistudio','perplexity','claude']
+  },
+  {
+    difficulty:'beginner',
+    q:'Custom GPTs 기능으로 특화 챗봇을 만들 수 있고, DALL-E 이미지 생성과 Code Interpreter 데이터 분석이 내장된 서비스는?',
+    hint:'💡 힌트: 가장 넓은 사용자 기반을 보유한 AI 서비스입니다.',
+    answer:'chatgpt', options:['chatgpt','claude','gemini','perplexity']
+  },
+  // ── INTERMEDIATE (중급) ──
+  {
+    difficulty:'intermediate',
+    q:'Constitutional AI 기반 안전성 설계를 채택하고 최대 1M 토큰 컨텍스트를 지원(2026년 2월 GA)하여 논문 수십 편을 한 번에 분석할 수 있는 서비스는?',
+    hint:'💡 힌트: Anthropic이 개발했으며 Opus 4.6·Sonnet 4.6이 최신 모델입니다.',
+    answer:'claude', options:['claude','gemini','perplexity','chatgpt']
+  },
+  {
+    difficulty:'intermediate',
+    q:'업로드 자료 기반 답변과 함께 Discover Sources로 관련 웹 소스까지 자동 탐색하며, 학습 자료를 AI 팟캐스트 형식(Audio Overview)으로 자동 변환해주는 Google 도구는?',
+    hint:'💡 힌트: 완전 무료이며 시험 준비에 특히 최적화된 Google 도구입니다.',
+    answer:'notebooklm', options:['notebooklm','gemini','perplexity','claude']
+  },
+  {
+    difficulty:'intermediate',
+    q:'간호 케어플랜 초안 작성 시 NANDA 형식의 간호진단·목표·중재를 한 번에 생성하고 데이터 분석과 이미지 생성도 한 플랫폼에서 처리할 수 있는 서비스는?',
+    hint:'💡 힌트: 가장 풍부한 서드파티 생태계를 보유하고 월 $20 Pro 플랜을 제공합니다.',
+    answer:'chatgpt', options:['claude','chatgpt','gemini','aistudio']
+  },
+  {
+    difficulty:'intermediate',
+    q:'Temperature·Top-P 등 파라미터 조정, "Grounding with Google Search"로 실시간 웹 검색 연동, 시스템 프롬프트로 맞춤형 AI 튜터 제작까지 한 번에 실험할 수 있는 Google 개발자 플랫폼은?',
+    hint:'💡 힌트: 신용카드 없이 무료 API 키를 발급받아 Python 코드와 연동할 수 있습니다.',
+    answer:'aistudio', options:['aistudio','notebooklm','perplexity','claude']
+  },
+  {
+    difficulty:'intermediate',
+    q:'$19.99/월 구독 시 Google One 2TB 스토리지와 NotebookLM Pro가 함께 포함되며, Gemini 2.5 Pro의 100만 토큰 컨텍스트와 Deep Research 기능을 활용할 수 있는 서비스는?',
+    hint:'💡 힌트: Google AI Pro 플랜으로 이름이 변경되었습니다.',
+    answer:'gemini', options:['gemini','aistudio','notebooklm','chatgpt']
+  },
+  {
+    difficulty:'beginner',
+    q:'학교 Microsoft 365 계정으로 무료 사용 가능하며, Word·PowerPoint·Excel에 AI가 내장되어 실습 보고서 작성과 발표자료 생성을 Office 앱 안에서 바로 처리할 수 있는 서비스는?',
+    hint:'💡 힌트: Study Mode로 강의자료를 퀴즈·플래시카드로 자동 변환할 수 있습니다.',
+    answer:'copilot', options:['copilot','chatgpt','gemini','claude']
+  },
+  {
+    difficulty:'beginner',
+    q:'텍스트 프롬프트 한 줄 입력만으로 60초 안에 완성형 프레젠테이션을 생성하며, PDF·Word 파일을 업로드하면 AI가 자동으로 슬라이드로 재구성해주는 AI 발표자료 특화 도구는?',
+    hint:'💡 힌트: 7,000만 명이 사용하며, Gamma Agent가 웹 검색으로 최신 정보를 반영합니다.',
+    answer:'gamma', options:['gamma','canva','copilot','notebooklm']
+  },
+  {
+    difficulty:'intermediate',
+    q:'Magic Studio 25개 이상 AI 도구를 통합하여 "손 씻기 교육 포스터" 프롬프트 하나로 전문가 수준의 의료 교육 인포그래픽을 즉시 생성하며, 교육기관 무료 플랜도 제공하는 시각 디자인 특화 서비스는?',
+    hint:'💡 힌트: 월 1억 7천만 명이 사용하며, K-12 교사·학생에게 Pro 기능을 무료 제공합니다.',
+    answer:'canva', options:['canva','gamma','copilot','chatgpt']
+  }
+];
+
+// ═══════════════════════════════════════════════
+// LOCALSTORAGE 유틸
+// ═══════════════════════════════════════════════
+const LS_FAV_KEY   = 'aiexplorer_favorites';
+const LS_RATE_KEY  = 'aiexplorer_ratings';
+const LS_MYPR_KEY  = 'aiexplorer_myprompts'; // {serviceId: [{label,text,id}]}
+
+function lsSaveFavorites() {
+  try { localStorage.setItem(LS_FAV_KEY, JSON.stringify([...favorites])); } catch(e){}
+}
+function lsLoadFavorites() {
+  try {
+    const raw = localStorage.getItem(LS_FAV_KEY);
+    if (raw) { const arr = JSON.parse(raw); return new Set(arr); }
+  } catch(e){}
+  return new Set();
+}
+function lsSaveRatings() {
+  try { localStorage.setItem(LS_RATE_KEY, JSON.stringify(sessionRatings)); } catch(e){}
+}
+function lsLoadRatings() {
+  try {
+    const raw = localStorage.getItem(LS_RATE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return null;
+}
+function lsSaveMyPrompts() {
+  try { localStorage.setItem(LS_MYPR_KEY, JSON.stringify(myPrompts)); } catch(e){}
+}
+function lsLoadMyPrompts() {
+  try {
+    const raw = localStorage.getItem(LS_MYPR_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return {};
+}
+
+// ═══════════════════════════════════════════════
+// STATE  (localStorage에서 복원)
+// ═══════════════════════════════════════════════
+let currentView = 'card';
+let activeFilters = new Set();
+let searchQuery = '';
+let selectedServices = new Set();
+let favorites = lsLoadFavorites();
+let sessionRatings = {};
+let myPrompts = lsLoadMyPrompts();
+let quizState = {active:false, questions:[], index:0, score:0, answered:false, difficulty:'all', correct:0, wrong:0};
+let panels = {fav:false, compare:false, quiz:false, ratings:false};
+
+// 평가 데이터 복원 (저장된 값 있으면 사용, 없으면 빈 배열)
+const _savedRatings = lsLoadRatings();
+SERVICES.forEach(s => {
+  sessionRatings[s.id] = (_savedRatings && Array.isArray(_savedRatings[s.id]))
+    ? _savedRatings[s.id] : [];
+});
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ═══════════════════════════════════════════════
+// FILTER / SEARCH
+// ═══════════════════════════════════════════════
+function getFiltered() {
+  return SERVICES.filter(s => {
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const hay = [s.name, s.company, ...s.features, s.strength,
+        ...s.scenarios.map(x=>x.text+x.title),
+        ...s.pricing.map(p=>p.name+p.amount),
+        ...s.prompts.map(p=>p.text+p.label)].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    for (const f of activeFilters) {
+      if (f==='free' && s.plan==='paid') return false;
+      if (f==='korean' && !s.korean) return false;
+      if (f==='file' && !s.fileUpload) return false;
+      if (f==='websearch' && !s.webSearch) return false;
+      if (f==='fav' && !favorites.has(s.id)) return false;
+      if (f==='rated' && sessionRatings[s.id].length===0) return false;
+    }
+    return true;
+  });
+}
+function toggleFilter(el) {
+  const f = el.dataset.filter;
+  activeFilters.has(f) ? (activeFilters.delete(f), el.classList.remove('active')) : (activeFilters.add(f), el.classList.add('active'));
+  render();
+}
+document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value.trim(); render(); });
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function render() {
+  if (currentView==='card') renderCards();
+  else renderTable();
+  renderFavList();
+  renderRatingsGrid();
+  updateCompareBtn();
+  updateRatingBadge();
+}
+
+function planBadge(s) {
+  if (s.plan==='free') return `<span class="badge b-free">무료</span>`;
+  if (s.plan==='paid') return `<span class="badge b-paid">유료</span>`;
+  return `<span class="badge b-freemium">무료+유료</span>`;
+}
+
+function starsHtml(n, size=12) {
+  return Array.from({length:5}, (_,i)=>
+    `<span style="color:${i<n?'#f59e0b':'#d1d5db'};font-size:${size}px">★</span>`).join('');
+}
+
+function avgRating(id) {
+  const rs = sessionRatings[id];
+  if (!rs.length) return 0;
+  return rs.reduce((a,b)=>a+b.stars,0)/rs.length;
+}
+
+function renderCards() {
+  const filtered = getFiltered();
+  const grid = document.getElementById('cardGrid');
+  document.getElementById('emptyState').style.display = filtered.length?'none':'block';
+  if (!filtered.length) { grid.innerHTML=''; return; }
+  grid.innerHTML = filtered.map(s => {
+    const isFav = favorites.has(s.id);
+    const isSel = selectedServices.has(s.id);
+    const avg = avgRating(s.id);
+    const ratingCount = sessionRatings[s.id].length;
+    const minPrice = s.pricing.find(p=>p.amount==='무료') ? '무료 플랜 있음' : s.pricing[0].amount;
+    return `
+<div class="service-card ${isSel?'selected':''}" style="--card-color:${s.color}" id="card-${s.id}">
+  <div class="card-top">
+    <div class="card-header-row">
+      <div class="card-logo" style="background:${s.bg}">${s.emoji}</div>
+      <div class="card-actions">
+        ${ratingCount>0?`<div style="font-size:10px;color:#f59e0b;padding:4px 6px;background:var(--surface2);border-radius:6px;border:1px solid var(--border)">${avg.toFixed(1)}★</div>`:''}
+        <button class="card-btn ${isFav?'fav-active':''}" onclick="toggleFav('${s.id}',event)" title="${isFav?'즐겨찾기 해제':'즐겨찾기 추가'}">
+          ${isFav?'⭐':'☆'}
+        </button>
+        <button class="card-btn ${isSel?'sel-active':''}" style="${isSel?'background:'+s.color:''}" onclick="toggleSelect('${s.id}',event)" title="비교 선택">
+          ${isSel?'✓':'+'}
+        </button>
+      </div>
+    </div>
+    <div class="card-name">${s.emoji} ${s.name}</div>
+    <div class="card-meta">${s.company} · ${s.year} · ${minPrice}</div>
+    <div class="card-badges">
+      ${planBadge(s)}
+      ${s.korean?'<span class="badge b-kr">🇰🇷 한국어</span>':''}
+      ${s.fileUpload?'<span class="badge b-file">📎 파일</span>':''}
+      ${s.webSearch?'<span class="badge b-web">🌐 웹검색</span>':''}
+    </div>
+  </div>
+  <!-- TABS -->
+  <div class="card-tabs">
+    <button class="c-tab active" onclick="switchTab(this,'${s.id}','features')">✨ 특징</button>
+    <button class="c-tab" onclick="switchTab(this,'${s.id}','prompts')">💬 예시</button>
+    <button class="c-tab" onclick="switchTab(this,'${s.id}','myprompts'); renderMyPrompts('${s.id}')">✏️ 내 프롬프트</button>
+    <button class="c-tab" onclick="switchTab(this,'${s.id}','pricing')">💰 가격</button>
+    <button class="c-tab" onclick="switchTab(this,'${s.id}','rating')">⭐ 평가</button>
+  </div>
+  <!-- TAB: 특징 -->
+  <div class="c-tab-content active" id="tab-${s.id}-features">
+    <ul class="card-features">${s.features.map(f=>`<li>${f}</li>`).join('')}</ul>
+    ${s.scenarios.map(sc=>`
+    <div class="card-scenario">
+      <div class="scenario-title">${sc.title}</div>
+      <div class="scenario-text">${sc.text}</div>
+    </div>`).join('')}
+    <div class="strength-box">
+      <div class="strength-title">💪 간호 교육 맥락 강점</div>
+      <div class="strength-text">${s.strength}</div>
+    </div>
+  </div>
+  <!-- TAB: 프롬프트 -->
+  <div class="c-tab-content" id="tab-${s.id}-prompts">
+    <div class="prompt-list">
+      ${s.prompts.map((p,i)=>`
+      <div class="prompt-item" id="pi-${s.id}-${i}" data-text="${p.text.replace(/"/g,'&quot;').replace(/\n/g,'&#10;')}" onclick="copyPrompt('${s.id}',${i})">
+        <div class="prompt-num">${i+1}</div>
+        <div class="prompt-label">📋 ${p.label}</div>
+        <div class="prompt-text">${p.text}</div>
+        <span class="prompt-copy" id="pc-${s.id}-${i}">📋 클릭하여 복사</span>
+      </div>`).join('')}
+    </div>
+    <div class="prompt-tip">💡 <strong>사용법:</strong> 프롬프트를 클릭하면 자동 복사됩니다. ${s.name}에 붙여넣어 시작하세요. 대괄호 [ ] 안의 내용은 본인 상황에 맞게 수정하세요.</div>
+  </div>
+  <!-- TAB: 나만의 프롬프트 -->
+  <div class="c-tab-content" id="tab-${s.id}-myprompts">
+    <div id="myprompt-area-${s.id}">
+      <div class="myprompt-empty">⬇️ 불러오는 중...</div>
+    </div>
+  </div>
+  <!-- TAB: 가격 -->
+  <div class="c-tab-content" id="tab-${s.id}-pricing">
+    ${s.pricing.map(p=>`
+    <div class="price-tier" style="--tier-color:${p.color}">
+      <div class="price-tier-header">
+        <div class="price-tier-name">${p.name}</div>
+        <div>
+          <div class="price-amount">${p.amount}</div>
+          ${p.krw?`<div class="price-krw">${p.krw}</div>`:''}
+        </div>
+      </div>
+      <ul class="price-features">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>
+    </div>`).join('')}
+    <div class="price-note">📌 ${s.priceNote}</div>
+  </div>
+  <!-- TAB: 평가 -->
+  <div class="c-tab-content" id="tab-${s.id}-rating">
+    <div class="rating-area">
+      <div class="rating-label">이 서비스를 얼마나 유용하게 느끼나요?</div>
+      <div class="star-input" id="stars-${s.id}">
+        ${[1,2,3,4,5].map(n=>`<button class="star-btn" data-val="${n}" data-id="${s.id}" onclick="setStarRating('${s.id}',${n})">⭐</button>`).join('')}
+      </div>
+      <textarea class="rating-memo" id="memo-${s.id}" rows="2" placeholder="간단한 사용 소감을 적어주세요 (선택)"></textarea>
+      <button class="btn-submit-rating" onclick="submitRating('${s.id}')" style="background:${s.color}">
+        📨 평가 제출
+      </button>
+      <div class="rs-success" id="rs-success-${s.id}">✅ 평가가 제출되었습니다!</div>
+    </div>
+    <div class="rating-divider"></div>
+    <div class="rating-summary" id="rs-${s.id}">
+      ${renderRatingSummaryHtml(s.id)}
+    </div>
+  </div>
+  <div class="card-footer">
+    <a class="card-url" href="${s.url}" target="_blank" rel="noopener">
+      ↗
+      ${s.url.replace('https://','').replace('www.','')}
+    </a>
+    <span style="font-size:11px;color:var(--text3);font-family:'Space Mono',monospace">${s.year}</span>
+  </div>
+</div>`;
+  }).join('');
+  // restore star states
+  SERVICES.forEach(s => { const cur = getActiveStars(s.id); if (cur) highlightStars(s.id, cur); });
+}
+
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+function switchTab(btn, id, tabName) {
+  const card = document.getElementById('card-'+id);
+  card.querySelectorAll('.c-tab').forEach(t=>t.classList.remove('active'));
+  card.querySelectorAll('.c-tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`tab-${id}-${tabName}`).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════
+// MY PROMPTS (나만의 프롬프트)
+// ═══════════════════════════════════════════════
+function renderMyPrompts(sid) {
+  const area = document.getElementById('myprompt-area-' + sid);
+  if (!area) return;
+  const list = (myPrompts[sid] || []);
+  const svc  = SERVICES.find(s => s.id === sid);
+  const color = svc ? svc.color : 'var(--accent)';
+
+  area.innerHTML = `
+    <div class="myprompt-header">
+      <h4>✏️ 나만의 프롬프트</h4>
+      <span class="myprompt-count">${list.length}개 저장됨 (브라우저 누적)</span>
+    </div>
+    <button class="myprompt-add-btn" onclick="showMyPromptForm('${sid}')">
+      + 새 프롬프트 작성
+    </button>
+    <div id="myprompt-form-${sid}" style="display:none">
+      <div class="myprompt-form" style="border-color:${color}">
+        <input class="myprompt-label-input" id="mp-label-${sid}"
+          placeholder="프롬프트 이름 (예: 케어플랜 템플릿)" maxlength="40"
+          style="border-color:${color}">
+        <textarea class="myprompt-textarea" id="mp-text-${sid}"
+          placeholder="프롬프트 내용을 입력하세요…&#10;대괄호 [ ] 안에 바꿀 내용을 표시하면 편리합니다."
+          style="border-color:${color}"></textarea>
+        <div class="myprompt-form-footer">
+          <button class="btn-myprompt-cancel" onclick="hideMyPromptForm('${sid}')">취소</button>
+          <button class="btn-myprompt-save" style="background:${color}"
+            onclick="saveMyPrompt('${sid}')">💾 저장</button>
+        </div>
+      </div>
+    </div>
+    <div class="myprompt-list" id="myprompt-list-${sid}">
+      ${list.length === 0
+        ? `<div class="myprompt-empty">
+            아직 저장된 프롬프트가 없습니다.<br>
+            <span style="font-size:10px;color:var(--text3)">위 버튼을 눌러 첫 번째 프롬프트를 작성해보세요!</span>
+           </div>`
+        : list.map((p, i) => `
+          <div class="myprompt-item" id="mpi-${sid}-${i}">
+            <div class="myprompt-item-header">
+              <span class="myprompt-item-label" style="color:${color}">📌 ${escHtml(p.label)}</span>
+              <div class="myprompt-item-actions">
+                <button class="btn-mp-action" onclick="copyMyPrompt('${sid}',${i},this)">📋 복사</button>
+                <button class="btn-mp-action" onclick="editMyPrompt('${sid}',${i})">✏️ 수정</button>
+                <button class="btn-mp-action btn-mp-del" onclick="deleteMyPrompt('${sid}',${i})">🗑</button>
+              </div>
+            </div>
+            <div class="myprompt-item-text">${escHtml(p.text)}</div>
+          </div>`).join('')
+      }
+    </div>`;
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showMyPromptForm(sid, label='', text='') {
+  const form = document.getElementById('myprompt-form-' + sid);
+  document.getElementById('mp-label-' + sid).value = label;
+  document.getElementById('mp-text-'  + sid).value = text;
+  if (form) { form.style.display = 'block'; document.getElementById('mp-label-'+sid).focus(); }
+}
+function hideMyPromptForm(sid) {
+  const form = document.getElementById('myprompt-form-' + sid);
+  if (form) form.style.display = 'none';
+}
+
+function saveMyPrompt(sid, editIdx = null) {
+  const label = (document.getElementById('mp-label-' + sid).value || '').trim();
+  const text  = (document.getElementById('mp-text-'  + sid).value || '').trim();
+  if (!label) { showToast('❗ 프롬프트 이름을 입력해주세요.'); return; }
+  if (!text)  { showToast('❗ 프롬프트 내용을 입력해주세요.'); return; }
+
+  if (!myPrompts[sid]) myPrompts[sid] = [];
+
+  if (editIdx !== null && editIdx >= 0) {
+    myPrompts[sid][editIdx] = { label, text };
+    showToast('✅ 프롬프트가 수정되었습니다!');
+  } else {
+    myPrompts[sid].unshift({ label, text });
+    showToast('💾 프롬프트가 저장되었습니다!');
+  }
+
+  lsSaveMyPrompts();
+  hideMyPromptForm(sid);
+  renderMyPrompts(sid);
+}
+
+function editMyPrompt(sid, idx) {
+  const p = (myPrompts[sid] || [])[idx];
+  if (!p) return;
+  showMyPromptForm(sid, p.label, p.text);
+  // 저장 버튼을 수정 모드로 교체
+  const saveBtn = document.querySelector(`#myprompt-form-${sid} .btn-myprompt-save`);
+  if (saveBtn) {
+    saveBtn.textContent = '✏️ 수정 완료';
+    saveBtn.onclick = () => saveMyPrompt(sid, idx);
+  }
+}
+
+function deleteMyPrompt(sid, idx) {
+  if (!confirm('이 프롬프트를 삭제하시겠습니까?')) return;
+  myPrompts[sid].splice(idx, 1);
+  lsSaveMyPrompts();
+  renderMyPrompts(sid);
+  showToast('🗑️ 프롬프트가 삭제되었습니다.');
+}
+
+function copyMyPrompt(sid, idx, btn) {
+  const p = (myPrompts[sid] || [])[idx];
+  if (!p) return;
+  const done = () => {
+    if (btn) { const orig = btn.textContent; btn.textContent = '✅ 복사됨'; setTimeout(()=>btn.textContent=orig, 1800); }
+    showToast('📋 나만의 프롬프트가 복사되었습니다!');
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(p.text).then(done).catch(() => fallback(p.text, done));
+  } else {
+    fallback(p.text, done);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// PROMPTS
+// ═══════════════════════════════════════════════
+function copyPrompt(id, idx) {
+  const el = document.getElementById('pi-'+id+'-'+idx);
+  const label = document.getElementById('pc-'+id+'-'+idx);
+  if (!el) return;
+
+  // data-text 에서 원본 텍스트 복원 (HTML 엔티티 디코딩)
+  const raw = el.getAttribute('data-text') || '';
+  const text = raw.replace(/&quot;/g,'"').replace(/&#10;/g,'\n').replace(/&amp;/g,'&');
+
+  const done = () => {
+    el.style.borderColor = '#16a34a';
+    el.style.background = 'var(--surface2)';
+    if (label) { label.textContent = '✅ 복사 완료!'; label.style.color = '#16a34a'; }
+    showToast('📋 프롬프트가 복사되었습니다!');
+    setTimeout(() => {
+      el.style.borderColor = '';
+      el.style.background = '';
+      if (label) { label.textContent = '📋 클릭하여 복사'; label.style.color = ''; }
+    }, 1800);
+  };
+
+  // clipboard API 우선 시도
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallback(text, done));
+  } else {
+    fallback(text, done);
+  }
+}
+
+function fallback(text, cb) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    cb();
+  } catch(e) {
+    showToast('❌ 복사 실패 — 텍스트를 직접 선택해 복사하세요.');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RATINGS
+// ═══════════════════════════════════════════════
+let pendingStars = {};
+function getActiveStars(id) { return pendingStars[id]||0; }
+
+function setStarRating(id, n) {
+  pendingStars[id] = n;
+  highlightStars(id, n);
+}
+function highlightStars(id, n) {
+  const container = document.getElementById('stars-'+id);
+  if (!container) return;
+  container.querySelectorAll('.star-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.val)<=n);
+  });
+}
+function submitRating(id) {
+  const stars = pendingStars[id]||0;
+  if (!stars) { showToast('⭐ 별점을 선택해주세요!'); return; }
+  const memo = document.getElementById('memo-'+id).value.trim();
+  const now = new Date();
+  const timeStr = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  sessionRatings[id].unshift({stars, memo, time:timeStr});
+  lsSaveRatings();
+  delete pendingStars[id];
+  document.getElementById('memo-'+id).value = '';
+  highlightStars(id, 0);
+  const rs = document.getElementById('rs-success-'+id);
+  if (rs) { rs.style.display='block'; setTimeout(()=>rs.style.display='none',2500); }
+  // update summary
+  const sumEl = document.getElementById('rs-'+id);
+  if (sumEl) sumEl.innerHTML = renderRatingSummaryHtml(id);
+  updateRatingBadge();
+  renderRatingsGrid();
+  showToast(`⭐ ${SERVICES.find(s=>s.id===id).name} 평가 완료!`);
+}
+function renderRatingSummaryHtml(id) {
+  const rs = sessionRatings[id];
+  if (!rs.length) return `<div class="rc-empty">아직 평가가 없습니다.<br>위에서 첫 번째 평가를 남겨보세요!</div>`;
+  const avg = (rs.reduce((a,b)=>a+b.stars,0)/rs.length).toFixed(1);
+  const filled = Math.round(avg);
+  const starStr = '★'.repeat(filled)+'☆'.repeat(5-filled);
+  return `<div class="rs-avg">${avg}</div>
+  <div class="rs-stars">${starStr}</div>
+  <div class="rs-count">총 ${rs.length}개 평가 (세션)</div>
+  <div class="rs-comments">${rs.slice(0,5).map(r=>`
+    <div class="rs-comment">
+      <div class="rs-c-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)} <span style="font-size:9px;color:var(--text3);float:right">${r.time}</span></div>
+      ${r.memo?`<div>${r.memo}</div>`:'<div style="color:var(--text3);font-style:italic">소감 없음</div>'}
+    </div>`).join('')}</div>`;
+}
+function updateRatingBadge() {
+  const total = Object.values(sessionRatings).reduce((a,b)=>a+b.length,0);
+  const b = document.getElementById('ratingBadge');
+  b.textContent = total; b.style.display = total>0?'flex':'none';
+}
+function renderRatingsGrid() {
+  const grid = document.getElementById('ratingsGrid');
+  if (!grid) return;
+  grid.innerHTML = SERVICES.map(s => {
+    const rs = sessionRatings[s.id];
+    const avg = rs.length ? (rs.reduce((a,b)=>a+b.stars,0)/rs.length).toFixed(1) : '-';
+    const filled = rs.length ? Math.round(parseFloat(avg)) : 0;
+    return `<div class="ratings-card" style="border-top:3px solid ${s.color}">
+      <div class="rc-header">
+        <div class="rc-name">${s.emoji} ${s.name}</div>
+        <div class="rc-avg" style="color:${s.color}">${avg}${rs.length?'★':''}</div>
+      </div>
+      <div class="rc-stars-display">${'★'.repeat(filled)}${'☆'.repeat(5-filled)} <span style="font-size:10px;color:var(--text3)">(${rs.length}개)</span></div>
+      <div class="rc-comments" style="margin-top:8px">
+        ${rs.length===0
+          ? `<div class="rc-empty">평가 없음</div>`
+          : rs.slice(0,3).map(r=>`
+            <div class="rs-comment">
+              <span class="rc-c-stars">${'★'.repeat(r.stars)}</span>
+              <span class="rc-c-time">${r.time}</span><br>
+              ${r.memo||'<span style="color:var(--text3);font-style:italic">소감 없음</span>'}
+            </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+function clearAllRatings() {
+  if (!confirm('모든 평가 데이터를 초기화하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+  SERVICES.forEach(s => { sessionRatings[s.id] = []; });
+  lsSaveRatings();
+  updateRatingBadge();
+  renderRatingsGrid();
+  render();
+  showToast('🗑️ 평가 데이터가 초기화되었습니다.');
+}
+
+function toggleRatingsPanel() {
+  panels.ratings = !panels.ratings;
+  document.getElementById('ratingsPanel').classList.toggle('open', panels.ratings);
+  if (panels.ratings) { renderRatingsGrid(); document.getElementById('ratingsPanel').scrollIntoView({behavior:'smooth',block:'start'}); }
+}
+
+// ═══════════════════════════════════════════════
+// FAVORITES
+// ═══════════════════════════════════════════════
+function toggleFav(id, e) {
+  if(e) e.stopPropagation();
+  favorites.has(id) ? favorites.delete(id) : favorites.add(id);
+  lsSaveFavorites();
+  updateFavBadge(); render();
+  showToast(favorites.has(id) ? `⭐ ${SERVICES.find(s=>s.id===id).name} 즐겨찾기 추가!` : '즐겨찾기에서 제거했습니다');
+}
+function updateFavBadge() {
+  const b = document.getElementById('favBadge');
+  b.textContent = favorites.size; b.style.display = favorites.size>0?'flex':'none';
+}
+function renderFavList() {
+  const list = document.getElementById('favList');
+  if (!list) return;
+  if (!favorites.size) { list.innerHTML='<span style="font-size:12px;color:var(--text3)">⭐ 버튼으로 즐겨찾기를 추가하세요.</span>'; return; }
+  list.innerHTML = [...favorites].map(id=>{
+    const s = SERVICES.find(x=>x.id===id);
+    return `<div class="fav-item" style="border-left:3px solid ${s.color}">${s.emoji} ${s.name}<span class="fav-remove" onclick="toggleFav('${id}',event)">✕</span></div>`;
+  }).join('');
+}
+function toggleFavPanel() { panels.fav=!panels.fav; document.getElementById('favPanel').classList.toggle('open',panels.fav); renderFavList(); }
+document.getElementById('btnFavToggle').addEventListener('click', toggleFavPanel);
+
+// ═══════════════════════════════════════════════
+// SELECT & COMPARE
+// ═══════════════════════════════════════════════
+function toggleSelect(id, e) {
+  if(e) e.stopPropagation();
+  if (selectedServices.has(id)) { selectedServices.delete(id); }
+  else { if (selectedServices.size>=3){showToast('최대 3개까지 비교 가능합니다.');return;} selectedServices.add(id); }
+  updateCompareBtn(); render();
+}
+function updateCompareBtn() {
+  const btn = document.getElementById('btnCompare');
+  btn.disabled = selectedServices.size<2;
+  document.getElementById('selCount').textContent = `(${selectedServices.size})`;
+}
+function showCompare() {
+  if (selectedServices.size<2) return;
+  panels.compare=true;
+  document.getElementById('comparePanel').classList.add('open');
+  renderCompareTable();
+  document.getElementById('comparePanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeCompare() { panels.compare=false; document.getElementById('comparePanel').classList.remove('open'); }
+function clearSelection() { selectedServices.clear(); closeCompare(); updateCompareBtn(); render(); }
+function renderCompareTable() {
+  const svcs = [...selectedServices].map(id=>SERVICES.find(s=>s.id===id));
+  const ck = v=>v?'<span class="c-ok">✓</span>':'<span class="c-no">✗</span>';
+  const rows = [
+    ['개발사', s=>s.company],
+    ['출시연도', s=>`<span style="font-family:'Space Mono',monospace">${s.year}</span>`],
+    ['플랜', s=>planBadge(s)],
+    ['최저 유료가격', s=>{const paid=s.pricing.filter(p=>p.amount!=='무료'&&p.amount!=='종량제'); return paid.length?`<span style="font-family:'Space Mono',monospace;font-weight:700;color:${paid[0].color}">${paid[0].amount}</span><br><span style="font-size:10px;color:var(--text3)">${paid[0].krw||''}</span>`:'<span style="color:#16a34a">무료만 있음</span>';}],
+    ['한국어', s=>ck(s.korean)],
+    ['파일 업로드', s=>ck(s.fileUpload)],
+    ['웹 검색', s=>ck(s.webSearch)],
+    ['웹 검색 방식', s=>{
+      const methods = {
+        chatgpt:'실시간 자동 + Deep Research',
+        gemini:'Google 검색 실시간 통합',
+        claude:'웹 검색 내장',
+        perplexity:'검색엔진 + AI 분석 (출처 인용)',
+        notebooklm:'Discover Sources (소스 추가 후 분석)',
+        aistudio:'Grounding with Google Search',
+        copilot:'Bing 검색 통합 + Deep Research',
+        canva:'미지원',
+        gamma:'Gamma Agent 웹 탐색'
+      };
+      return `<span style="font-size:10px;line-height:1.6;display:block;color:var(--text2)">${methods[s.id]||'-'}</span>`;
+    }],
+    ['컨텍스트', s=>({chatgpt:'272K',gemini:'2M',claude:'1M',perplexity:'제한없음',notebooklm:'소스기반',aistudio:'1M',copilot:'128K+',canva:'N/A',gamma:'N/A'}[s.id]||'-')],
+    ['핵심 강점', s=>`<span style="font-size:11px;line-height:1.6;display:block">${s.strength.slice(0,90)}…</span>`],
+    ['간호학생 추천도', s=>{const avg=avgRating(s.id);return avg>0?`<span style="color:#f59e0b">${'★'.repeat(Math.round(avg))}</span> ${avg.toFixed(1)}`:'<span style="color:var(--text3)">미평가</span>';}],
+    ['접속 URL', s=>`<a href="${s.url}" target="_blank" style="color:var(--accent2);font-size:11px;font-family:'Space Mono',monospace">${s.url.replace('https://','').replace('www.','')}</a>`]
+  ];
+  document.getElementById('compareContent').innerHTML = `
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th class="row-label">항목</th>
+        ${svcs.map(s=>`<th><div class="svc-header"><span class="emoji">${s.emoji}</span><div class="name">${s.name}</div><div class="company">${s.company}</div></div></th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>
+      ${rows.map(([label,fn])=>`<tr><td class="row-label">${label}</td>${svcs.map(s=>`<td>${fn(s)}</td>`).join('')}</tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════
+// TABLE VIEW
+// ═══════════════════════════════════════════════
+function renderTable() {
+  const ck = v=>v?'<span class="c-ok" style="font-size:14px">✓</span>':'<span class="c-no" style="font-size:14px">✗</span>';
+  document.getElementById('tableBody').innerHTML = getFiltered().map(s=>{
+    const paid = s.pricing.filter(p=>p.amount!=='무료'&&p.amount!=='종량제');
+    return `<tr>
+      <td><span style="font-size:16px;margin-right:6px">${s.emoji}</span><strong style="color:var(--text)">${s.name}</strong></td>
+      <td>${s.company}</td>
+      <td style="font-family:'Space Mono',monospace">${s.year}</td>
+      <td>${s.plan!=='paid'?'<span class="c-ok">✓</span>':'<span class="c-no">✗</span>'}</td>
+      <td class="td-price">${paid.length?`<span style="color:${paid[0].color};font-weight:700">${paid[0].amount}</span><br><span style="font-size:10px;color:var(--text3)">${paid[0].krw||''}</span>`:'무료만'}</td>
+      <td>${ck(s.korean)}</td>
+      <td>${ck(s.fileUpload)}</td>
+      <td>${ck(s.webSearch)}</td>
+      <td style="max-width:200px;font-size:11px;line-height:1.5;color:var(--text2)">${s.features[0]}</td>
+      <td><a class="td-link" href="${s.url}" target="_blank">${s.url.replace('https://','').replace('www.','')}</a></td>
+      <td>
+        <button onclick="toggleSelect('${s.id}',event)" style="width:28px;height:28px;border:1.5px solid ${selectedServices.has(s.id)?s.color:'var(--border)'};border-radius:8px;background:${selectedServices.has(s.id)?s.color:'var(--surface2)'};cursor:pointer;color:${selectedServices.has(s.id)?'#fff':'var(--text3)'};font-size:11px;transition:all .2s;display:inline-flex;align-items:center;justify-content:center">
+          ${selectedServices.has(s.id)?'✓':'+'}
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// VIEW TOGGLE
+// ═══════════════════════════════════════════════
+function setView(v) {
+  currentView = v;
+  document.getElementById('cardView').style.display = v==='card'?'block':'none';
+  document.getElementById('tableView').style.display = v==='table'?'block':'none';
+  document.getElementById('btnCard').classList.toggle('active', v==='card');
+  document.getElementById('btnTable').classList.toggle('active', v==='table');
+  render();
+}
+
+// ═══════════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════════
+function openQuizSelector() {
+  panels.quiz = true;
+  document.getElementById('quizPanel').classList.add('open');
+  document.getElementById('quizContent').innerHTML = `
+    <div style="margin-bottom:20px">
+      <h2 style="font-size:18px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        ❓ AI 서비스 퀴즈
+      </h2>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:20px">난이도를 선택하고 시작하세요!</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+        <div onclick="startQuiz('beginner')" style="background:var(--surface2);border:2px solid #16a34a;border-radius:12px;padding:18px;cursor:pointer;transition:all .2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <div style="font-size:28px;margin-bottom:6px">🌱</div>
+          <div style="font-weight:800;font-size:14px;color:#15803d;margin-bottom:4px">초급 (Beginner)</div>
+          <div style="font-size:11px;color:var(--text3)">5문항 · 서비스 기본 특징 파악</div>
+          <div style="margin-top:8px;background:#dcfce7;color:#15803d;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700">쉬운 난이도</div>
+        </div>
+        <div onclick="startQuiz('intermediate')" style="background:var(--surface2);border:2px solid #d97706;border-radius:12px;padding:18px;cursor:pointer;transition:all .2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <div style="font-size:28px;margin-bottom:6px">🔥</div>
+          <div style="font-weight:800;font-size:14px;color:#92400e;margin-bottom:4px">중급 (Intermediate)</div>
+          <div style="font-size:11px;color:var(--text3)">5문항 · 상세 기능·가격 비교</div>
+          <div style="margin-top:8px;background:#fef3c7;color:#92400e;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700">보통 난이도</div>
+        </div>
+        <div onclick="startQuiz('all')" style="background:var(--surface2);border:2px solid #7c3aed;border-radius:12px;padding:18px;cursor:pointer;transition:all .2s;text-align:center" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+          <div style="font-size:28px;margin-bottom:6px">⚡</div>
+          <div style="font-weight:800;font-size:14px;color:#6d28d9;margin-bottom:4px">전체 (All)</div>
+          <div style="font-size:11px;color:var(--text3)">10문항 · 초급+중급 통합</div>
+          <div style="margin-top:8px;background:linear-gradient(135deg,#ede9fe,#f3e8ff);color:#6d28d9;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700">어려운 난이도</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-quit-q" onclick="closeQuiz()">✕ 닫기</button>`;
+  document.getElementById('quizPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function startQuiz(difficulty) {
+  const pool = difficulty==='all' ? [...QUIZ_ALL] : QUIZ_ALL.filter(q=>q.difficulty===difficulty);
+  quizState = {active:true, questions:pool.map(q=>({...q,options:[...q.options].sort(()=>Math.random()-.5)})), index:0, score:0, answered:false, difficulty, correct:0, wrong:0};
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  const qs = quizState.questions;
+  if (quizState.index >= qs.length) { renderQuizResult(); return; }
+  const q = qs[quizState.index];
+  const prog = quizState.index/qs.length*100;
+  const diffLabel = q.difficulty==='beginner' ? '초급' : '중급';
+  const diffClass = q.difficulty==='beginner' ? 'qdb-beginner' : 'qdb-intermediate';
+  const fillClass = quizState.difficulty==='all' ? 'fill-all' : (quizState.difficulty==='beginner'?'fill-beginner':'fill-intermediate');
+  quizState.answered = false;
+  document.getElementById('quizContent').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+      <h2 style="font-size:16px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px">
+        ❓ 퀴즈
+      </h2>
+      <span style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace">${quizState.index+1} / ${qs.length} · ✅${quizState.correct} ❌${quizState.wrong}</span>
+    </div>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill ${fillClass}" style="width:${prog}%"></div></div>
+    <span class="quiz-difficulty-badge ${diffClass}">${diffLabel}</span>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-hint">${q.hint}</div>
+    <div class="quiz-options">
+      ${q.options.map(id=>{const s=SERVICES.find(x=>x.id===id);return `<button class="quiz-opt" data-id="${id}" onclick="answerQuiz('${id}','${q.answer}')"><span style="font-size:18px">${s.emoji}</span>${s.name}</button>`;}).join('')}
+    </div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <div class="quiz-nav">
+      <button class="btn-next" id="btnNext" onclick="nextQuiz()" disabled>
+        ${quizState.index===qs.length-1?'결과 보기 🏁':'다음 문제 →'}
+      </button>
+      <button class="btn-quit-q" onclick="openQuizSelector()">↩ 재선택</button>
+      <button class="btn-quit-q" onclick="closeQuiz()">✕ 닫기</button>
+    </div>`;
+}
+
+function answerQuiz(selected, correct) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const isCorrect = selected===correct;
+  isCorrect ? quizState.correct++ : quizState.wrong++;
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.disabled=true;
+    if (btn.dataset.id===correct) btn.classList.add('correct');
+    else if (btn.dataset.id===selected&&!isCorrect) btn.classList.add('wrong');
+  });
+  const cs = SERVICES.find(s=>s.id===correct);
+  const fb = document.getElementById('quizFeedback');
+  fb.className=`quiz-feedback show ${isCorrect?'ok':'fail'}`;
+  fb.innerHTML = isCorrect
+    ? `✅ 정답! <strong>${cs.name}</strong>이 맞습니다. ${cs.features[0]}`
+    : `❌ 오답. 정답은 <strong>${cs.name} (${cs.company})</strong>입니다. ${cs.strength.slice(0,100)}…`;
+  document.getElementById('btnNext').disabled=false;
+}
+function nextQuiz() { quizState.index++; renderQuizQuestion(); }
+function closeQuiz() { panels.quiz=false; document.getElementById('quizPanel').classList.remove('open'); }
+
+function renderQuizResult() {
+  const total = quizState.questions.length;
+  const pct = Math.round(quizState.correct/total*100);
+  let emoji, comment;
+  if (pct===100){emoji='🏆';comment='완벽! 모든 AI 서비스를 완벽히 이해했습니다!';}
+  else if (pct>=80){emoji='🌟';comment='훌륭해요! 거의 다 알고 있네요!';}
+  else if (pct>=60){emoji='👍';comment='좋아요! 조금 더 탐색하면 완벽해질 거예요.';}
+  else{emoji='📚';comment='카드를 더 탐색하고 다시 도전해보세요!';}
+  document.getElementById('quizContent').innerHTML = `
+    <div style="text-align:center;padding:16px 0">
+      <div style="font-size:50px;margin-bottom:8px">${emoji}</div>
+      <div style="font-size:36px;font-weight:900;color:${pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626'};margin-bottom:4px">${quizState.correct}/${total}</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:6px">정답률 ${pct}%</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px">${comment}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px">
+        <div style="background:#dcfce7;border:1px solid #86efac;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;color:#15803d">✅ 정답 ${quizState.correct}개</div>
+        <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;color:#b91c1c">❌ 오답 ${quizState.wrong}개</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;color:var(--text2)">난이도: ${{beginner:'🌱초급',intermediate:'🔥중급',all:'⚡전체'}[quizState.difficulty]}</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-retry" onclick="startQuiz('${quizState.difficulty}')">🔄 다시 풀기</button>
+        <button class="btn-retry" style="background:linear-gradient(135deg,#059669,#10b981)" onclick="openQuizSelector()">📋 난이도 변경</button>
+        <button class="btn-quit-q" style="padding:11px 18px" onclick="closeQuiz()">✕ 닫기</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════
+document.getElementById('btnDark').addEventListener('click', ()=>{
+  const dark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('btnDark').innerHTML = dark?'🌙':'☀️';
+});
+document.getElementById('btnRatingsGlobal').addEventListener('click', toggleRatingsPanel);
+
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+updateFavBadge();
+updateRatingBadge();
+render();
+</script>
+</body>
+</html>
