@@ -1756,15 +1756,29 @@ function renderQuizQuestion() {
   const fillClass = quizState.difficulty==='all' ? 'fill-all' : (quizState.difficulty==='beginner' ? 'fill-beginner' : 'fill-intermediate');
   const typeLabels = {mc:'4지선다 📝', ox:'O / X ✅❌', blank:'빈칸 채우기 ✏️', match:'짝짓기 🔗'};
   const typeCls    = {mc:'qtb-mc', ox:'qtb-ox', blank:'qtb-blank', match:'qtb-match'};
+
+  // 상태 초기화
   quizState.answered = false;
-  quizState.blankFilled = [];
+  quizState.blankFilled = q.type==='blank' ? new Array(q.blanks.length).fill(null) : [];
   quizState.matchSelected = null;
   quizState.matchDone = 0;
   quizState.matchCorrect = 0;
+  quizState.matchPairs = q.type==='match' ? q.pairs : [];
+
+  // 셔플 (매번 새로 섞음)
+  if (q.type==='mc' || !q.type) {
+    quizState.shuffledOptions = [...q.options].sort(()=>Math.random()-.5);
+  }
+  if (q.type==='match') {
+    quizState.shuffledRight = [...q.pairs.map(p=>p.right)].sort(()=>Math.random()-.5);
+  }
+  if (q.type==='blank') {
+    quizState.shuffledBlanks = [...q.options].sort(()=>Math.random()-.5);
+  }
 
   const header = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
-      <h2 style="font-size:16px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:7px">❓ 퀴즈</h2>
+      <h2 style="font-size:16px;font-weight:800;color:var(--text)">❓ 퀴즈</h2>
       <span style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace">${quizState.index+1} / ${qs.length} · ✅${quizState.correct} ❌${quizState.wrong}</span>
     </div>
     <div class="quiz-progress-bar"><div class="quiz-progress-fill ${fillClass}" style="width:${prog}%"></div></div>
@@ -1781,65 +1795,56 @@ function renderQuizQuestion() {
 
   let body = '';
 
-  // ── MC (4지선다) ──
+  // ── MC (4지선다) ── onclick에 복잡한 텍스트 제거, data-id만 사용
   if (q.type === 'mc' || !q.type) {
-    const shuffled = [...q.options].sort(()=>Math.random()-.5);
     body = `
       <div class="quiz-q">${q.q}</div>
       <div class="quiz-hint">${q.hint}</div>
       <div class="quiz-options">
-        ${shuffled.map(id=>{
+        ${quizState.shuffledOptions.map(id=>{
           const s=SERVICES.find(x=>x.id===id);
-          return `<button class="quiz-opt" data-id="${id}" onclick="answerMC('${id}','${q.answer}','${q.hint}')">
-            <span style="font-size:18px">${s?s.emoji:id}</span>${s?s.name:id}
+          return `<button class="quiz-opt" data-id="${id}" onclick="answerMC(this)">
+            <span style="font-size:18px">${s?s.emoji:''}</span>${s?s.name:id}
           </button>`;
         }).join('')}
       </div>`;
   }
 
-  // ── OX (참/거짓) ──
+  // ── OX (참/거짓) ── onclick에 인자 없음
   else if (q.type === 'ox') {
     body = `
       <div class="quiz-q">${q.q}</div>
       <div class="quiz-hint">${q.hint}</div>
       <div class="ox-options">
-        <button class="ox-btn ox-o" onclick="answerOX('O','${q.answer}')">
+        <button class="ox-btn ox-o" data-val="O" onclick="answerOX(this)">
           ⭕<span class="ox-label">맞다 (O)</span>
         </button>
-        <button class="ox-btn ox-x" onclick="answerOX('X','${q.answer}')">
+        <button class="ox-btn ox-x" data-val="X" onclick="answerOX(this)">
           ❌<span class="ox-label">틀리다 (X)</span>
         </button>
       </div>`;
   }
 
-  // ── BLANK (빈칸 채우기) ──
+  // ── BLANK (빈칸 채우기) ── onclick에 인덱스만 전달
   else if (q.type === 'blank') {
-    // Build sentence with blank slots
     let sentence = q.q;
-    q.blanks.forEach((b,i)=>{
-      sentence = sentence.replace('_____', `<span class="blank-slot" id="bs-${i}" data-idx="${i}">　　　</span>`);
+    q.blanks.forEach((_,i)=>{
+      sentence = sentence.replace('_____',
+        `<span class="blank-slot" id="bs-${i}">　　　</span>`);
     });
-    const shuffledOpts = [...q.options].sort(()=>Math.random()-.5);
-    quizState.blankFilled = new Array(q.blanks.length).fill(null);
     body = `
       <div class="quiz-hint" style="margin-bottom:10px">${q.hint}</div>
-      <div class="blank-sentence" id="blankSentence">${sentence}</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">보기에서 클릭하여 빈칸을 채우세요:</div>
+      <div class="blank-sentence">${sentence}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">보기에서 클릭하여 빈칸을 순서대로 채우세요:</div>
       <div class="blank-options" id="blankOptions">
-        ${shuffledOpts.map((opt,i)=>`<button class="blank-opt" id="bo-${i}" data-opt="${opt}" onclick="fillBlank(this,'${opt.replace(/'/g,"\\'")}')">
-          ${opt}
-        </button>`).join('')}
+        ${quizState.shuffledBlanks.map((opt,i)=>
+          `<button class="blank-opt" id="bo-${i}" data-bi="${i}" onclick="fillBlank(${i})">${opt}</button>`
+        ).join('')}
       </div>`;
   }
 
-  // ── MATCH (짝짓기) ──
+  // ── MATCH (짝짓기) ── onclick에 인덱스만
   else if (q.type === 'match') {
-    const shuffledRight = [...q.pairs.map(p=>p.right)].sort(()=>Math.random()-.5);
-    quizState.matchPairs = q.pairs;
-    quizState.matchSelected = null;
-    quizState.matchDone = 0;
-    quizState.matchCorrect = 0;
-    quizState.matchAnswered = new Set();
     body = `
       <div class="quiz-q">${q.q}</div>
       <div class="quiz-hint">${q.hint}</div>
@@ -1847,36 +1852,35 @@ function renderQuizQuestion() {
       <div class="match-area">
         <div class="match-col">
           <div class="match-col-label">서비스</div>
-          ${q.pairs.map((p,i)=>`<button class="match-item" id="ml-${i}" data-idx="${i}" data-side="left" onclick="selectMatch('left',${i})">${p.left}</button>`).join('')}
+          ${q.pairs.map((p,i)=>
+            `<button class="match-item" id="ml-${i}" onclick="selectMatchLeft(${i})">${p.left}</button>`
+          ).join('')}
         </div>
         <div class="match-col">
           <div class="match-col-label">특징</div>
-          ${shuffledRight.map((r,i)=>`<button class="match-item" id="mr-${i}" data-val="${r.replace(/"/g,'&quot;')}" data-side="right" onclick="selectMatch('right',${i},'${r.replace(/'/g,"\\'")}')">
-            ${r}
-          </button>`).join('')}
+          ${quizState.shuffledRight.map((r,i)=>
+            `<button class="match-item" id="mr-${i}" data-ri="${i}" onclick="selectMatchRight(${i})">${r}</button>`
+          ).join('')}
         </div>
       </div>`;
   }
 
   document.getElementById('quizContent').innerHTML = header + body + nav;
-
-  // BLANK: reset state
-  if (q.type==='blank') {
-    quizState.blankFilled = new Array(q.blanks.length).fill(null);
-    quizState.blankCurrent = 0; // next blank to fill
-  }
 }
 
-// ── MC 답변 ──
-function answerMC(selected, correct, hint) {
+// ── MC 답변 (this 참조로 data-id 읽기) ──
+function answerMC(btn) {
   if (quizState.answered) return;
+  const selected = btn.dataset.id;
+  const q = quizState.questions[quizState.index];
+  const correct = q.answer;
   quizState.answered = true;
   const isCorrect = selected === correct;
   isCorrect ? quizState.correct++ : quizState.wrong++;
-  document.querySelectorAll('.quiz-opt').forEach(btn => {
-    btn.disabled = true;
-    if (btn.dataset.id===correct) btn.classList.add('correct');
-    else if (btn.dataset.id===selected && !isCorrect) btn.classList.add('wrong');
+  document.querySelectorAll('.quiz-opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.id===correct) b.classList.add('correct');
+    else if (b.dataset.id===selected && !isCorrect) b.classList.add('wrong');
   });
   const cs = SERVICES.find(s=>s.id===correct);
   showQuizFeedback(isCorrect,
@@ -1885,48 +1889,46 @@ function answerMC(selected, correct, hint) {
   document.getElementById('btnNext').disabled = false;
 }
 
-// ── OX 답변 ──
-function answerOX(selected, correct) {
+// ── OX 답변 (this 참조로 data-val 읽기) ──
+function answerOX(btn) {
   if (quizState.answered) return;
+  const selected = btn.dataset.val;
+  const q = quizState.questions[quizState.index];
+  const correct = q.answer;
   quizState.answered = true;
   const isCorrect = selected === correct;
   isCorrect ? quizState.correct++ : quizState.wrong++;
-  document.querySelectorAll('.ox-btn').forEach(btn => {
-    btn.disabled = true;
-    const val = btn.classList.contains('ox-o') ? 'O' : 'X';
-    if (val===correct) btn.classList.add('correct');
-    else if (val===selected && !isCorrect) btn.classList.add('wrong');
+  document.querySelectorAll('.ox-btn').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.val===correct) b.classList.add('correct');
+    else if (b.dataset.val===selected && !isCorrect) b.classList.add('wrong');
   });
-  const q = quizState.questions[quizState.index];
   showQuizFeedback(isCorrect,
     isCorrect ? `✅ 정답! ${q.explanation}`
               : `❌ 오답. 정답은 <strong>${correct}</strong>입니다. ${q.explanation}`);
   document.getElementById('btnNext').disabled = false;
 }
 
-// ── BLANK 채우기 ──
-function fillBlank(btnEl, opt) {
+// ── BLANK 채우기 (버튼 인덱스로 참조) ──
+function fillBlank(bi) {
   if (quizState.answered) return;
   const q = quizState.questions[quizState.index];
-  // Find next empty slot
+  const opt = quizState.shuffledBlanks[bi];
   const idx = quizState.blankFilled.indexOf(null);
   if (idx === -1) return;
   quizState.blankFilled[idx] = opt;
-  btnEl.classList.add('used');
-  btnEl.disabled = true;
-  // Update slot display
+  const btnEl = document.getElementById('bo-'+bi);
+  if (btnEl) { btnEl.classList.add('used'); btnEl.disabled = true; }
   const slot = document.getElementById('bs-'+idx);
   if (slot) { slot.textContent = opt; slot.classList.add('filled'); }
-  // Check if all blanks filled
   if (!quizState.blankFilled.includes(null)) {
     quizState.answered = true;
     const allCorrect = quizState.blankFilled.every((v,i) => v === q.answer[i]);
     allCorrect ? quizState.correct++ : quizState.wrong++;
-    // Color options
     document.querySelectorAll('.blank-opt').forEach(b => { b.disabled = true; });
     quizState.blankFilled.forEach((v,i)=>{
-      const slot = document.getElementById('bs-'+i);
-      if (slot) slot.style.color = v===q.answer[i] ? '#16a34a' : '#dc2626';
+      const s = document.getElementById('bs-'+i);
+      if (s) s.style.color = v===q.answer[i] ? '#16a34a' : '#dc2626';
     });
     showQuizFeedback(allCorrect,
       allCorrect ? `✅ 정답! ${q.explanation}`
@@ -1935,49 +1937,46 @@ function fillBlank(btnEl, opt) {
   }
 }
 
-// ── MATCH 짝짓기 ──
-function selectMatch(side, idx, val) {
+// ── MATCH 왼쪽 선택 ──
+function selectMatchLeft(idx) {
   if (quizState.answered) return;
+  const el = document.getElementById('ml-'+idx);
+  if (!el || el.classList.contains('matched-ok') || el.classList.contains('matched-err')) return;
+  document.querySelectorAll('[id^="ml-"]').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  quizState.matchSelected = idx;
+}
+
+// ── MATCH 오른쪽 선택 ──
+function selectMatchRight(ri) {
+  if (quizState.answered) return;
+  if (quizState.matchSelected === null) { showToast('먼저 왼쪽 서비스를 선택하세요!'); return; }
   const q = quizState.questions[quizState.index];
-  if (side==='left') {
-    // Deselect previous left
-    document.querySelectorAll('.match-item[data-side="left"]').forEach(b=>b.classList.remove('selected'));
-    document.getElementById('ml-'+idx).classList.add('selected');
-    quizState.matchSelected = {side:'left', idx};
-  } else {
-    // Need a left selected first
-    if (!quizState.matchSelected || quizState.matchSelected.side!=='left') {
-      showToast('먼저 왼쪽 서비스를 선택하세요!'); return;
-    }
-    const leftIdx = quizState.matchSelected.idx;
-    const leftEl  = document.getElementById('ml-'+leftIdx);
-    const rightEl = document.getElementById('mr-'+idx);
-    if (!leftEl||!rightEl) return;
-    if (leftEl.classList.contains('matched-ok')||leftEl.classList.contains('matched-err')) return;
-    // Check correctness
-    const correctRight = q.pairs[leftIdx].right;
-    const isOk = val === correctRight;
-    isOk ? quizState.matchCorrect++ : null;
-    quizState.matchDone++;
-    leftEl.classList.add(isOk?'matched-ok':'matched-err');
-    leftEl.disabled = true;
-    rightEl.classList.add(isOk?'matched-ok':'matched-err');
-    rightEl.disabled = true;
-    leftEl.classList.remove('selected');
-    quizState.matchSelected = null;
-    // Update progress
-    const prog = document.getElementById('matchProgress');
-    if (prog) prog.textContent = `${quizState.matchDone} / ${q.pairs.length} 연결됨`;
-    // All matched?
-    if (quizState.matchDone === q.pairs.length) {
-      quizState.answered = true;
-      const allOk = quizState.matchCorrect === q.pairs.length;
-      allOk ? quizState.correct++ : quizState.wrong++;
-      showQuizFeedback(allOk,
-        allOk ? `✅ 완벽! 모든 짝을 정확히 연결했습니다!`
-              : `❌ ${q.pairs.length - quizState.matchCorrect}개 오류. 빨간색으로 표시된 항목을 확인하세요.`);
-      document.getElementById('btnNext').disabled = false;
-    }
+  const leftIdx = quizState.matchSelected;
+  const leftEl  = document.getElementById('ml-'+leftIdx);
+  const rightEl = document.getElementById('mr-'+ri);
+  if (!leftEl||!rightEl) return;
+  if (leftEl.classList.contains('matched-ok')||leftEl.classList.contains('matched-err')) return;
+  if (rightEl.classList.contains('matched-ok')||rightEl.classList.contains('matched-err')) { showToast('이미 연결된 항목입니다.'); return; }
+  const correctRight = q.pairs[leftIdx].right;
+  const selectedRight = quizState.shuffledRight[ri];
+  const isOk = selectedRight === correctRight;
+  if (isOk) quizState.matchCorrect++;
+  quizState.matchDone++;
+  leftEl.classList.add(isOk?'matched-ok':'matched-err'); leftEl.disabled=true;
+  rightEl.classList.add(isOk?'matched-ok':'matched-err'); rightEl.disabled=true;
+  leftEl.classList.remove('selected');
+  quizState.matchSelected = null;
+  const prog = document.getElementById('matchProgress');
+  if (prog) prog.textContent = `${quizState.matchDone} / ${q.pairs.length} 연결됨`;
+  if (quizState.matchDone === q.pairs.length) {
+    quizState.answered = true;
+    const allOk = quizState.matchCorrect === q.pairs.length;
+    allOk ? quizState.correct++ : quizState.wrong++;
+    showQuizFeedback(allOk,
+      allOk ? `✅ 완벽! 모든 짝을 정확히 연결했습니다!`
+            : `❌ ${q.pairs.length-quizState.matchCorrect}개 오류. 빨간색 항목을 확인하세요.`);
+    document.getElementById('btnNext').disabled = false;
   }
 }
 
@@ -1988,8 +1987,12 @@ function showQuizFeedback(isOk, html) {
   fb.innerHTML = html;
 }
 
-// Keep legacy answerQuiz for compatibility
-function answerQuiz(selected, correct) { answerMC(selected, correct, ''); }
+// 하위 호환
+function answerQuiz(selected, correct) {
+  const fakeBtn = {dataset:{id:selected}};
+  answerMC(fakeBtn);
+}
+
 function nextQuiz() { quizState.index++; renderQuizQuestion(); }
 function closeQuiz() { panels.quiz=false; document.getElementById('quizPanel').classList.remove('open'); }
 
